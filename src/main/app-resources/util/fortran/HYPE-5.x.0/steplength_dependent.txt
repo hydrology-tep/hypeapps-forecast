@@ -1,0 +1,41 @@
+MAYBE?
+        REAL    :: rivlen = 0.           !TD?? !length of main river (m)
+        REAL    :: qcor = 1.             !TD?? !correction factor for flow (e.g. to scale if areas are different)
+        REAL    :: qamp = 0.             !TD !regulated lake, amplitude of variation of average discharge between wmin and whigh
+        REAL    :: rate = 0.             !TD? !rate parameter of outflow equation (m2/s)
+        REAL    :: exp = 0.              !TD? !exponent parameter of outflow equation
+
+
+PROBABLY
+	REAL    :: qpha = 102.           !TD !regulated lake, phase of variation of average discharge JD20100503
+
+
+
+
+CONFIRMED
+	processes using seconds_per_day (defined in hypevar.f90)
+
+
+DAYNO users - may need to adjust conditions but no scaling
+        INTEGER :: fertday1              !TD !day for fertilizing 1 (dayno)
+        INTEGER :: manday1               !TD !day for manureing 1 (dayno)
+        INTEGER :: fertday2              !TD  !day for fertilizing 2 (dayno)
+        INTEGER :: manday2               !TD  !day for manureing 2 (dayno)
+        INTEGER :: resdayno              !TD  !day for residual (dayno)
+        INTEGER :: baredayno1            !TD !day for beginning of first period with bare soil (dayno), typically 1
+        INTEGER :: baredayno2            !TD  !day for end of first period with bare soil (dayno), typically sawing dat +  a few days
+        INTEGER :: baredayno3            !TD  !day for beginning of second period with bare soil (dayno), typically ploughing date
+        INTEGER :: baredayno4            !TD  !day for end of second period with bare soil (dayno), typically 365
+        INTEGER :: baredayno5            !TD  !day for end of second period with bare soil (dayno), typically 365
+
+
+FROM EARLIER VERSION : 
+
+replace seconds_per_day with seconds_per_timestep in equations
+
+
+
+HANDLED 
+
+replaced seconds_per_day with seconds_per_timestep in hypevar.f90 (no
+default value)
