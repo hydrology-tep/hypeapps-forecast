@@ -362,8 +362,8 @@ writeWorldFile<-function(fileName, pxWidth, pxHeight, degWidth, degHeight, lonBa
   thisq<-ReadTimeOutput(paste(fileDir,name.hypeout,sep="/"))
   
   # determine first and last date in file
-  cdate=as.character(thisq[1,1],format="%Y%m%d")
-  edate=as.character(thisq[nrow(thisq),1],format="%Y%m%d")
+  cdate=as.character(thisq[1,1],format="%Y-%m-%d")
+#  edate=as.character(thisq[nrow(thisq),1],format="%Y%m%d")
   
   # continue
   colnames(thisq)<-sub("X","",colnames(thisq))
@@ -464,17 +464,17 @@ if(testHYPE[1]>0){
 # initiate jpeg or png file for plotting using Cairo graphics device
 CairoPNG(filename = plotFileName, width = width, height = height, units = "px",bg = "white")
 
-# jafets 
-#png(paste(plotDir,name.wl.png,sep="/"),res = 300, width = 18, height = 15, units = "cm")
-
 par(xaxs = "i", yaxs = "i", lend = 1,mar=c(0,0,0,0),cex=graphScale)
 plot(shapefileData,col=NA,border="grey")  # subbasin boundaries
 plot(shapefileData,col=thiswl[sm,"col"],border="NA",add=T)  # warninglevels
 
-legend("topleft",inset=c(0,0.05),title=paste(modelName,"             \n","Warning Levels         ","\n",cdate,"-",edate,sep=""),
-       pt.cex=graphScale*2,pch=15,bty="n",
+legend("topleft",inset=c(0,0.07),title=paste(modelName," 10 day forecast    \n","Issue date ",cdate,"             ",
+                                             "\n","River discharge warning levels",sep=""),
+       pt.cex=graphScale*4,cex=2,pch=15,bty="n",
        col=.makeTransparent(wl.col,wl.alpha),
-       legend=c("1              ",as.character(2:length(wl.rp))))
+       legend=c(paste(" Warning 1   (",as.character(wl.rp[1])," yr RP)",sep=""),
+                paste(" Warning 2   (",as.character(wl.rp[2])," yr RP)",sep=""),
+                paste(" Warning 3   (",as.character(wl.rp[3])," yr RP)",sep="")))
 dev.off()
 
 

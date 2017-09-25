@@ -671,6 +671,8 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
   ## check existance of forcing archive, and if existing, it's first and last date.
   if(!is.null(forcingArchiveURL)){
     forcingArchiveExist=T
+  }else{
+    forcingArchiveExist=F
   }
   
   ## Sub-basin shapefiles (potentially for all applications for map plots)

@@ -644,15 +644,15 @@ writeWorldFile<-function(fileName, pxWidth, pxHeight, degWidth, degHeight, lonBa
 # 5- plot content of the map output as png-file to output dir
 # --------------------------------------------------------------------------
 
-# # next lines used only for development
-#   fileDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder with mapoutput files
-#   plotDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder where the plot files should be written
-#   mapFile      = "004_mapCOUT.txt"   # mapoutput filename
-#   modelName    = "Niger-hype"   # modelName (used for plot main title)
-#   rdataFile    = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test/shp.Rdata"   # path to rdata file with subbasin spatial polygons data frame
-#   prefix.png   = "001"   # png filename prefix
-#   cdate=as.POSIXct("1979-01-01",tz="GMT")
-#   edate=as.POSIXct("1980-01-01",tz="GMT")
+# next lines used only for development
+  fileDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder with mapoutput files
+  plotDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder where the plot files should be written
+  mapFile      = "004_mapCOUT.txt"   # mapoutput filename
+  modelName    = "Niger-hype"   # modelName (used for plot main title)
+  rdataFile    = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test/shp.Rdata"   # path to rdata file with subbasin spatial polygons data frame
+  prefix.png   = "001"   # png filename prefix
+  cdate=as.POSIXct("1979-01-01",tz="GMT")
+  edate=as.POSIXct("1980-01-01",tz="GMT")
 
 # echo arguments to the TEP log file'
 rciop.log ("DEBUG", paste(" plot-mapoutput, fileDir: ",fileDir,sep=""), "/util/R/hypeapps-plot-mapoutput.R")
@@ -667,7 +667,7 @@ mapData = ReadMapOutput(filename = paste(fileDir,mapFile,sep="/"))
 load(rdataFile)
 
 # # next line used only for development
-# shapefileData = shp
+shapefileData = shp
 
 # variable name from MapOutput filename
 varName = substr(mapFile,nchar(mapFile)-7,nchar(mapFile)-4)
@@ -740,10 +740,6 @@ if(pngORjpg==1){
   CairoPNG(filename = plotFileName, width = width, height = height, units = "px",bg = "white")
 }
 
-#par(xaxs = "i", yaxs = "i", cex=1.2,mar=rep(0,4))
-#plot(shapefileData,col=NA,border="grey")  # subbasin boundaries
-#plot(shapefileData,col=mapData$X2016.2017,border="NA",add=T)  # warninglevels
-
 # mapplot
 PlotMapOutput(x = mapData, 
              map = shapefileData,
@@ -752,7 +748,7 @@ PlotMapOutput(x = mapData,
              plot.arrow = F,
              legend.title = varPlot,
              legend.pos = "topleft",
-             par.mar = c(0,0,0,0),par.cex = 1.2,par.mai=c(0,0,0,0))
+             par.mar = c(0,0,0,0),par.cex = 3,par.mai=c(0,0,0,0))
 # text
 legend("bottomleft",legend = mainTitle,bty="n")
 # Close plot
