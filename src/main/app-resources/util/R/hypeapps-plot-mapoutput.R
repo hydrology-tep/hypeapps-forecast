@@ -645,14 +645,14 @@ writeWorldFile<-function(fileName, pxWidth, pxHeight, degWidth, degHeight, lonBa
 # --------------------------------------------------------------------------
 
 # next lines used only for development
-  fileDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder with mapoutput files
-  plotDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder where the plot files should be written
-  mapFile      = "004_mapCOUT.txt"   # mapoutput filename
-  modelName    = "Niger-hype"   # modelName (used for plot main title)
-  rdataFile    = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test/shp.Rdata"   # path to rdata file with subbasin spatial polygons data frame
-  prefix.png   = "001"   # png filename prefix
-  cdate=as.POSIXct("1979-01-01",tz="GMT")
-  edate=as.POSIXct("1980-01-01",tz="GMT")
+#   fileDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder with mapoutput files
+#   plotDir      = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test"   # folder where the plot files should be written
+#   mapFile      = "004_mapCOUT.txt"   # mapoutput filename
+#   modelName    = "Niger-hype"   # modelName (used for plot main title)
+#   rdataFile    = "D:/TEP/ModellingService/sandbox/home/dgustafsson/hype-files/test/shp.Rdata"   # path to rdata file with subbasin spatial polygons data frame
+#   prefix.png   = "001"   # png filename prefix
+#   cdate=as.POSIXct("1979-01-01",tz="GMT")
+#   edate=as.POSIXct("1980-01-01",tz="GMT")
 
 # echo arguments to the TEP log file'
 rciop.log ("DEBUG", paste(" plot-mapoutput, fileDir: ",fileDir,sep=""), "/util/R/hypeapps-plot-mapoutput.R")
@@ -667,7 +667,7 @@ mapData = ReadMapOutput(filename = paste(fileDir,mapFile,sep="/"))
 load(rdataFile)
 
 # # next line used only for development
-shapefileData = shp
+#shapefileData = shp
 
 # variable name from MapOutput filename
 varName = substr(mapFile,nchar(mapFile)-7,nchar(mapFile)-4)

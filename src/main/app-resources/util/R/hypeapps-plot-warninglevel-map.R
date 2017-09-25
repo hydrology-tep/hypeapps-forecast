@@ -16,7 +16,7 @@
 #
 # hypeapps-plot-warninglevel-map.R: Script to plot map with forecast warning levels, used for TEP Hydrology.
 # Author:                           David Gustafsson, Jafet Andersson, SMHI
-# Version:                          2017-09-22
+# Version:                          2017-09-25
 # -------------------------------------------------------------------
 # 1 - Argument inputs
 # -------------------------------------------------------------------
