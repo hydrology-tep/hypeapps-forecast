@@ -121,11 +121,11 @@
  	     <default>Qstn Niamey, 4244</default>
       </options>
      </parameter>
-     <parameter id="basinset" type="LiteralData" scope="runtime" title="Output sub-basins (SUBID)" abstract="Comma delimited, HYPE sub-basin identifiers" minOccurs="1" maxOccurs="850">-9999</parameter>
+     <parameter id="basinset" type="LiteralData" scope="runtime" title="Output sub-basins (SUBID)" abstract="Comma delimited, HYPE sub-basin identifiers" minOccurs="0" maxOccurs="850">-9999</parameter>
 
      <parameter id="rpcout" type="LiteralData" scope="runtime" title="Return Period Warning Level File (River discharge)" abstract="Input file from catalogue" minOccurs="1" maxOccurs="1">default</parameter>
 
-     <parameter id="xobs" type="LiteralData" scope="runtime" title="Xobs file(s) with EO and/or In-situ data" abstract="Xobs file(s) with pre-processed EO or In-situ data" minOccurs="1" maxOccurs="10">-9999</parameter>
+     <parameter id="xobs" type="LiteralData" scope="runtime" title="Xobs file(s) with EO and/or In-situ data" abstract="Xobs file(s) with pre-processed EO or In-situ data" minOccurs="0" maxOccurs="10">-9999</parameter>
 
      <parameter id="assimOn" type="LiteralData" scope="runtime" title="Assimilation on/off" abstract="Data assimilation on/off" minOccurs="1" maxOccurs="1">
       <options>
@@ -136,15 +136,16 @@
      </parameter>
 
      <parameter id="assimVars" type="LiteralData" scope="runtime" title="Assimilated observations" abstract="Observations to be assimilated" minOccurs="1" maxOccurs="5">
-      <options>
-       <option>Lake Water Level - altimetry, AOWL, WCOM</option>
-	      <option>Lake Water Level - in-situ, WSTR, WCOM</option>
-	      <option>River Water Level - altimetry, AMWL, CMWL</option>
-	      <option>River Water Level - in-situ, RMWL, CMWL</option>
- 	      <option>River Discharge - in-situ, ROUT, COUT</option>
-       <default>Lake Water Level - altimetry, AOWL, WCOM</default>
-      </options>
-     </parameter>
+               <options>
+                <option>Lake Water Level - altimetry, AOWL, WCOM</option>
+                <option>Openloop - ensembles without assimilation, OPEN, LOOP</option>
+     <!--	   <option>Lake Water Level - in-situ, WSTR, WCOM</option>
+     	   <option>River Water Level - altimetry, AMWL, CMWL</option>
+     	   <option>River Water Level - in-situ, RMWL, CMWL</option> 
+      	   <option>River Discharge - in-situ, ROUT, COUT</option> -->
+                <default>Lake Water Level - altimetry, AOWL, WCOM</default>
+               </options>
+         </parameter>
 
    </defaultParameters>
  
@@ -288,11 +289,11 @@
 	   </options>
      </parameter>
      
-     <parameter id="basinset" type="LiteralData" scope="runtime">-9999</parameter>
+     <parameter id="basinset" type="LiteralData" scope="runtime"></parameter>
      
      <parameter id="rpcout" type="LiteralData" scope="runtime">default</parameter>
 
-     <parameter id="xobs" type="LiteralData" scope="runtime">-9999</parameter>
+     <parameter id="xobs" type="LiteralData" scope="runtime"></parameter>
      
      <parameter id="assimOn" type="LiteralData" scope="runtime">
       <options>
@@ -303,15 +304,16 @@
      </parameter>
      
      <parameter id="assimVars" type="LiteralData" scope="runtime">
-     <options>
-       <option>Lake Water Level - altimetry, AOWL, WCOM</option>
-	     <option>Lake Water Level - in-situ, WSTR, WCOM</option>
-	     <option>River Water Level - altimetry, AMWL, CMWL</option>
-	     <option>River Water Level - in-situ, RMWL, CMWL</option>
- 	     <option>River Discharge - in-situ, ROUT, COUT</option>
-       <default>Lake Water Level - altimetry, AOWL, WCOM</default>
-       </options>
-     </parameter>
+     	  <options>
+     	   <option>Lake Water Level - altimetry, AOWL, WCOM</option>
+                <option>Openloop - ensembles without assimilation, OPEN, LOOP</option>
+     <!--	   <option>Lake Water Level - in-situ, WSTR, WCOM</option>
+     	   <option>River Water Level - altimetry, AMWL, CMWL</option>
+     	   <option>River Water Level - in-situ, RMWL, CMWL</option> 
+     	   <option>River Discharge - in-situ, ROUT, COUT</option> -->
+     	   <default>Lake Water Level - altimetry, AOWL, WCOM</default>
+     	  </options>
+	 </parameter>
 
    </parameters>
   </node>
