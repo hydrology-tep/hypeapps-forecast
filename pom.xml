@@ -48,7 +48,12 @@
                   <!-- Set here the dependencies installed with 'sudo yum install'-->
                   <requires>
                     <require>miniconda</require>
+                    <require>openjpeg2</require>
                   </requires>
+                  <postinstallScriptlet combine.self="override">
+		    <scriptFile>${basedir}/src/main/app-resources/scripts/postinstall.sh</scriptFile>
+		    <fileEncoding>utf-8</fileEncoding>
+                  </postinstallScriptlet>
                 </configuration>
               </execution>
             </executions>
