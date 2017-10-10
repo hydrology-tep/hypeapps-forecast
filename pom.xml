@@ -49,6 +49,8 @@
                   <requires>
                     <require>miniconda</require>
                     <require>openjpeg2</require>
+                    <require>proj</require>
+                    <require>libgfortran</require>
                   </requires>
                   <postinstallScriptlet combine.self="override">
                     <scriptFile>${basedir}/src/main/app-resources/scripts/postinstall.sh</scriptFile>
