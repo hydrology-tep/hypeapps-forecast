@@ -15,7 +15,7 @@
   <properties>
     <summary>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</summary>
     <description>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</description>
-    <community>hydro-tep</community>
+    <community>hydrology-tep</community>
     <yumRepo>hydrology-tep</yumRepo>
   </properties>
   <scm>
