@@ -9,7 +9,7 @@ bzip2=1.0.6=3
 cairo=1.14.8=0
 cffi=1.9.1=py27_0
 chardet=2.3.0=py27_0
-cioppy=0.2.1=py27_0
+cioppy=0.2.3=py27_0
 conda=4.3.25=py27_0
 conda-build=2.1.5=py27_0
 conda-env=2.6.0=0
@@ -190,7 +190,7 @@ r-r6=2.2.0=r3.3.1_0
 r-randomforest=4.6_12=r3.3.1_0
 r-raster=2.5_8=r3.3.1_0
 r-rbokeh=0.4.2=r3.3.1_0
-r-rciop=0.2=2
+r-rciop=0.2.1=0
 r-rcolorbrewer=1.1_2=r3.3.1_3
 r-rcpp=0.12.8=r3.3.1_0
 r-rcppeigen=0.3.2.8.1=r3.3.1_0
