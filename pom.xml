@@ -51,6 +51,8 @@
                     <require>openjpeg2</require>
                     <require>proj</require>
                     <require>libgfortran</require>
+                    <require>ghostscript-fonts</require>
+                    <require>urw-fonts</require>
                   </requires>
                   <postinstallScriptlet combine.self="override">
                     <scriptFile>${basedir}/src/main/app-resources/scripts/postinstall.sh</scriptFile>
