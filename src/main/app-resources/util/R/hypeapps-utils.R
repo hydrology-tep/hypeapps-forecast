@@ -16,7 +16,7 @@
 #
 # hypeapps-utils.R: R tools for the HTEP hydrological modelling application 
 # Author:           David Gustafsson, SMHI
-# Version:          2017-09-21
+# Version:          2017-11-08
 #
 
 ## --------------------------------------------------------------------------------
@@ -88,10 +88,23 @@ getHypeAppInput<-function(appName){
       
       # parse the outvar inputs
       outvarSplit = trimws(strsplit(outvarsIN,split = ",")[[1]])
-      nOut=length(outvarSplit)/3
-      outvars.name=outvarSplit[seq(1,nOut*3-2,3)]
-      outvars.unit=outvarSplit[seq(2,nOut*3-1,3)]
-      outvars.id=outvarSplit[seq(3,nOut*3,3)]
+      nOut=length(outvarSplit)
+      for(i in 1:nOut){
+        splitFirst = trimws(strsplit(outvarSplit[i],split = "(",fixed=T)[[1]])
+        oName=splitFirst[1]
+        splitSecond = trimws(strsplit(splitFirst[2],split = ")",fixed=T)[[1]])
+        oUnit=splitSecond[1]
+        oID=splitSecond[2]
+        if(i==1){
+          outvars.name=oName
+          outvars.unit=oUnit
+          outvars.id=oID
+        }else{
+          outvars.name=c(outvars.name,oName)
+          outvars.unit=c(outvars.unit,oUnit)
+          outvars.id=c(outvars.id,oID)
+        }
+      }
       outvars.num=nOut
       outvars=outvars.id[1]
       if(nOut>1){
@@ -101,9 +114,18 @@ getHypeAppInput<-function(appName){
       }
       # parse the basinselect and basinset intputs
       basinSplit = trimws(strsplit(basinselect,split = ",")[[1]])
-      nBasin=length(basinSplit)/2      
-      basins.name=basinSplit[seq(1,(nBasin*2)-1,2)]
-      basins.id=basinSplit[seq(2,(nBasin*2),2)]
+      nBasin=length(basinSplit)
+      for(i in 1:nBasin){
+        bName=substr(basinSplit[i],1,nchar(basinSplit[i])-5)
+        bID=substr(basinSplit[i],nchar(basinSplit[i])-3,nchar(basinSplit[i]))
+        if(i==1){
+          basins.name=bName
+          basins.id=bID
+        }else{
+          basins.name=c(basins.name,bName)
+          basins.id=c(basins.id,bID)
+        }
+      }
       basins.num=nBasin
       basins=basins.id[1]
       if(nBasin>1){
@@ -111,7 +133,7 @@ getHypeAppInput<-function(appName){
           basins=paste(basins,basins.id[i+1],sep=",")   
         }
       }
-      if(basinset!="-9999"){
+      if(basinset!="-9999" & nchar(basinset)>0){
         basinSplit=trimws(strsplit(basinset,split = ",")[[1]])
         # check if any of the basins in basinset was already selected by the basinselect
         iBasin=match(basinSplit,basins.id)
@@ -128,11 +150,11 @@ getHypeAppInput<-function(appName){
       }
       
       # If xobs !=-9999, parse the input to URLs
-      if(xobs!="-9999"){
+      if(length(xobs)>0){
         xobsNum=0
         xobsURL=NULL
         for(i in 1:length(xobs)){
-          if(nchar(xobs[i])>1){
+          if(nchar(xobs[i])>1 & xobs[i]!="-9999"){
             # update the number of xobs inputs
             xobsNum=xobsNum+1
             
@@ -153,10 +175,21 @@ getHypeAppInput<-function(appName){
       if(assimOn=="on"){
         # <option>Lake Water Level - altimetry, AOWL, WCOM</option>
         assimVarSplit = trimws(strsplit(assimVarIN,split = ",")[[1]])
-        nOut=length(assimVarSplit)/3
-        assimVar.name=assimVarSplit[seq(1,nOut*3-2,3)]
-        assimVar.obsid=assimVarSplit[seq(2,nOut*3-1,3)]
-        assimVar.simid=assimVarSplit[seq(3,nOut*3,3)]
+        nOut=length(assimVarSplit)
+        for(i in 1:nOut){
+          aName=substr(assimVarSplit[i],1,nchar(assimVarSplit[i])-10)
+          asID=substr(assimVarSplit[i],nchar(assimVarSplit[i])-3,nchar(assimVarSplit[i]))
+          aoID=substr(assimVarSplit[i],nchar(assimVarSplit[i])-8,nchar(assimVarSplit[i])-5)
+          if(i==1){
+            assimVar.name=aName
+            assimVar.simid=asID
+            assimVar.obsid=aoID
+          }else{
+            assimVar.name=c(assimVar.name,aName)
+            assimVar.simid=c(assimVar.simid,asID)
+            assimVar.obsid=c(assimVar.obsid,aoID)
+          }
+        }
         assimVar.num=nOut
         assimVar = paste(assimVar.obsid[1],assimVar.simid[1],sep=",")
         if(nOut>1){
@@ -248,13 +281,25 @@ getHypeAppInput<-function(appName){
       # temporarily commenting out the assimilation in the forecast application (David 20170827)
       assimOn     <- rciop.getparam("assimOn")     # Assimilation on/off
       assimVarIN  <- rciop.getparam("assimVars")   # Assimilation variables
-      
       # parse the outvar inputs
       outvarSplit = trimws(strsplit(outvarsIN,split = ",")[[1]])
-      nOut=length(outvarSplit)/3
-      outvars.name=outvarSplit[seq(1,nOut*3-2,3)]
-      outvars.unit=outvarSplit[seq(2,nOut*3-1,3)]
-      outvars.id=outvarSplit[seq(3,nOut*3,3)]
+      nOut=length(outvarSplit)
+      for(i in 1:nOut){
+        splitFirst = trimws(strsplit(outvarSplit[i],split = "(",fixed=T)[[1]])
+        oName=splitFirst[1]
+        splitSecond = trimws(strsplit(splitFirst[2],split = ")",fixed=T)[[1]])
+        oUnit=splitSecond[1]
+        oID=splitSecond[2]
+        if(i==1){
+          outvars.name=oName
+          outvars.unit=oUnit
+          outvars.id=oID
+        }else{
+          outvars.name=c(outvars.name,oName)
+          outvars.unit=c(outvars.unit,oUnit)
+          outvars.id=c(outvars.id,oID)
+        }
+      }
       outvars.num=nOut
       outvars=outvars.id[1]
       if(nOut>1){
@@ -264,9 +309,18 @@ getHypeAppInput<-function(appName){
       }
       # parse the basinselect and basinset intputs
       basinSplit = trimws(strsplit(basinselect,split = ",")[[1]])
-      nBasin=length(basinSplit)/2      
-      basins.name=basinSplit[seq(1,(nBasin*2)-1,2)]
-      basins.id=basinSplit[seq(2,(nBasin*2),2)]
+      nBasin=length(basinSplit)
+      for(i in 1:nBasin){
+        bName=substr(basinSplit[i],1,nchar(basinSplit[i])-5)
+        bID=substr(basinSplit[i],nchar(basinSplit[i])-3,nchar(basinSplit[i]))
+        if(i==1){
+          basins.name=bName
+          basins.id=bID
+        }else{
+          basins.name=c(basins.name,bName)
+          basins.id=c(basins.id,bID)
+        }
+      }
       basins.num=nBasin
       basins=basins.id[1]
       if(nBasin>1){
@@ -274,7 +328,7 @@ getHypeAppInput<-function(appName){
           basins=paste(basins,basins.id[i+1],sep=",")   
         }
       }
-      if(basinset!="-9999"){
+      if(basinset!="-9999" & nchar(basinset)>0){
         basinSplit=trimws(strsplit(basinset,split = ",")[[1]])
         # check if any of the basins in basinset was already selected by the basinselect
         iBasin=match(basinSplit,basins.id)
@@ -291,11 +345,11 @@ getHypeAppInput<-function(appName){
       }
       
       # If xobs !=-9999, parse the input to URLs
-      if(xobs!="-9999"){
+      if(length(xobs)>0){
         xobsNum=0
         xobsURL=NULL
         for(i in 1:length(xobs)){
-          if(nchar(xobs[i])>1){
+          if(nchar(xobs[i])>1 & xobs[i]!="-9999"){
             # update the number of xobs inputs
             xobsNum=xobsNum+1
             
@@ -312,15 +366,25 @@ getHypeAppInput<-function(appName){
         xobsURL=NULL
       }
       
-      
       # parse the AssimVarIn input
       if(assimOn=="on"){
         # <option>Lake Water Level - altimetry, AOWL, WCOM</option>
         assimVarSplit = trimws(strsplit(assimVarIN,split = ",")[[1]])
-        nOut=length(assimVarSplit)/3
-        assimVar.name=assimVarSplit[seq(1,nOut*3-2,3)]
-        assimVar.obsid=assimVarSplit[seq(2,nOut*3-1,3)]
-        assimVar.simid=assimVarSplit[seq(3,nOut*3,3)]
+        nOut=length(assimVarSplit)
+        for(i in 1:nOut){
+          aName=substr(assimVarSplit[i],1,nchar(assimVarSplit[i])-10)
+          asID=substr(assimVarSplit[i],nchar(assimVarSplit[i])-3,nchar(assimVarSplit[i]))
+          aoID=substr(assimVarSplit[i],nchar(assimVarSplit[i])-8,nchar(assimVarSplit[i])-5)
+          if(i==1){
+            assimVar.name=aName
+            assimVar.simid=asID
+            assimVar.obsid=aoID
+          }else{
+            assimVar.name=c(assimVar.name,aName)
+            assimVar.simid=c(assimVar.simid,asID)
+            assimVar.obsid=c(assimVar.obsid,aoID)
+          }
+        }
         assimVar.num=nOut
         assimVar = paste(assimVar.obsid[1],assimVar.simid[1],sep=",")
         if(nOut>1){
@@ -2558,4 +2622,22 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
   return(outDir)
 }
 
+# functions for application logfile that will be published as part of application results
+appLogOpen<-function(appName,tmpDir){
+  fileName=paste(tmpDir,"/","hypeapps-",appName,"-logfile.txt",sep="")
+  fileConn<-file(fileName,open="wt")
+  writeLines(paste("hypeapps-",appName," starting, ",as.character(date()),sep=""),fileConn)
+  return(list("fileName"=fileName,"fileConn"=fileConn))
+}
+appLogWrite<-function(logText,fileConn){
+  writeLines(paste(logText,", ",as.character(date()),sep=""),fileConn)
+  return(0)
+}
+appLogClose<-function(appName,fileConn){
+  writeLines(paste("hypeapps-",appName," ending, ",as.character(date()),sep=""),fileConn)
+  close(fileConn)
+  return(0)
+}
+
+# internal log succesful sourcing of file
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("all functions sourced"), "/util/R/hypeapps-utils.R")}
