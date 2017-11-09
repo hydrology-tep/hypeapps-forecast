@@ -466,7 +466,7 @@ getHypeAppInput<-function(appName){
       
       # parse the list of input timeXXXX files
       # If xobs !=-9999, parse the input to URLs
-      if(timeFileIN!="-9999"){
+      if(nchar(timeFileIN)>0 & timeFileIN[1]!="-9999"){
         timeFileNum=0
         timeFileURL=NULL
         for(i in 1:length(timeFileIN)){
@@ -507,52 +507,89 @@ getHypeAppInput<-function(appName){
       wlVariable <- as.character(rciop.getparam("wlVariable")) # water level Xobs variable name
       wlOffset   <- as.character(rciop.getparam("wlOffset"))   # water level offset correction (m)
       
+      wlDataInput=F
+      
       # Flood Monitoring data commented out for now, DG 20170615      
       #      flData     <- as.character(rciop.getparam("flData"))      # flood map data
       #      flVariable <- as.character(rciop.getparam("flVariable"))  # flood map Xobs variable name
       
       # parse the water level inputs, first the data URLs:
-      wlData = strsplit(x = wlDataIn,split = ",")[[1]]
-      wlDataNum=0
-      for(i in 1:length(wlData)){
-        if(nchar(wlData[i])>1){
-          # update the number of wldata inputs
-          wlDataNum=wlDataNum+1
-          
-          # extract the URL from wlData input string:
-          if(wlDataNum==1){
-            wlDataURL=strsplit(wlData[i],split = "&")[[1]][1]
-          }else{
-            wlDataURL=c(wlDataURL,strsplit(wlData[i],split = "&")[[1]][1])
+      if(wlDataIn!="-9999" & nchar(wlDataIn)>0){
+        wlData = strsplit(x = wlDataIn,split = ",")[[1]]
+        wlDataNum=0
+        for(i in 1:length(wlData)){
+          if(nchar(wlData[i])>1){
+            # update the number of wldata inputs
+            wlDataNum=wlDataNum+1
+            
+            # extract the URL from wlData input string:
+            if(wlDataNum==1){
+              wlDataURL=strsplit(wlData[i],split = "&")[[1]][1]
+            }else{
+              wlDataURL=c(wlDataURL,strsplit(wlData[i],split = "&")[[1]][1])
+            }
           }
         }
-      }
-      # secondly the SUBIDs and Variables 
-      if(wlDataNum>0){
-        # SUBIDs:
-        wlDataSubid=as.integer(strsplit(wlSubid,",")[[1]])
-        if(length(wlDataSubid)==wlDataNum & length(wlDataURL)==wlDataNum){
-          wlDataInput=T
-          
-          # variables:
-          wlDataVariableTemp=trimws(strsplit(wlVariable,",")[[1]])
-          nVar=length(wlDataVariableTemp)/3
-          wlDataVariable.name=wlDataVariableTemp[seq(1,nVar*3-2,3)]
-          wlDataVariable.unit=wlDataVariableTemp[seq(2,nVar*3-1,3)]
-          wlDataVariable     =wlDataVariableTemp[seq(3,nVar*3,3)]
-          
-          # Offsets:
-          wlDataOffset=as.integer(strsplit(wlOffset,",")[[1]])
-          if(length(wlDataVariable)<wlDataNum){
-            wlDataVariable=c(wlDataVariable,rep(wlDataVariable[1],wlDataNum-length(wlDataVariable)))
-          }else if(length(wlDataVariable)>wlDataNum){
-            wlDataVariable=wlDataVariable[1:wlDataNum]
+        # secondly the SUBIDs and Variables 
+        if(wlDataNum>0){
+          # SUBIDs:
+          if(nchar(wlSubid)>0){
+            wlDataSubid=as.integer(strsplit(wlSubid,",")[[1]])
+          }else{
+            wlDataSubid=-9999
           }
-          if(length(wlDataOffset)<wlDataNum){
-            wlDataOffset=c(wlDataOffset,rep(wlDataOffset[1],wlDataNum-length(wlDataOffset)))
-          }else if(length(wlDataOffset)>wlDataNum){
-            wlDataOffset=wlDataOffset[1:wlDataNum]
+          if(length(wlDataSubid)==wlDataNum & length(wlDataURL)==wlDataNum & wlDataSubid[1]!=-9999){
+            # flag that input is ok
+            wlDataInput=T
+            
+            # variables:
+            wlDataVariableTemp=trimws(strsplit(wlVariable,",")[[1]])
+            nVar=length(wlDataVariableTemp)
+            wlDataVariable.name=wlDataVariableTemp[seq(1,nVar*3-2,3)]
+            wlDataVariable.unit=wlDataVariableTemp[seq(2,nVar*3-1,3)]
+            wlDataVariable     =wlDataVariableTemp[seq(3,nVar*3,3)]
+            
+            
+            for(i in 1:nVar){
+              splitFirst = trimws(strsplit(wlDataVariableTemp[i],split = "(",fixed=T)[[1]])
+              oName=splitFirst[1]
+              splitSecond = trimws(strsplit(splitFirst[2],split = ")",fixed=T)[[1]])
+              oUnit=splitSecond[1]
+              oID=splitSecond[2]
+              if(i==1){
+                wlDataVariable.name=oName
+                wlDataVariable.unit=oUnit
+                wlDataVariable=oID
+              }else{
+                wlDataVariable.name=c(wlDataVariable.name,oName)
+                wlDataVariable.unit=c(wlDataVariable.unit,oUnit)
+                wlDataVariable=c(wlDataVariable,oID)
+              }
+            }
+
+            # Offsets:
+            wlDataOffset=as.integer(strsplit(wlOffset,",")[[1]])
+            if(length(wlDataVariable)<wlDataNum){
+              wlDataVariable=c(wlDataVariable,rep(wlDataVariable[1],wlDataNum-length(wlDataVariable)))
+            }else if(length(wlDataVariable)>wlDataNum){
+              wlDataVariable=wlDataVariable[1:wlDataNum]
+            }
+            if(length(wlDataOffset)<wlDataNum){
+              wlDataOffset=c(wlDataOffset,rep(wlDataOffset[1],wlDataNum-length(wlDataOffset)))
+            }else if(length(wlDataOffset)>wlDataNum){
+              wlDataOffset=wlDataOffset[1:wlDataNum]
+            }
+          }else{
+            wlDataNum=0
+            wlDataInput=F
+            wlDataURL=NULL
+            wlDataSubid=NULL
+            wlDataVariable=NULL
+            wlDataVariable.name <- NULL
+            wlDataVariable.unit <- NULL
+            wlDataOffset=NULL
           }
+        
         }else{
           wlDataNum=0
           wlDataInput=F
@@ -563,17 +600,6 @@ getHypeAppInput<-function(appName){
           wlDataVariable.unit <- NULL
           wlDataOffset=NULL
         }
-        
-      }else{
-        wlDataNum=0
-        wlDataInput=F
-        wlDataURL=NULL
-        wlDataSubid=NULL
-        wlDataVariable=NULL
-        wlDataVariable.name <- NULL
-        wlDataVariable.unit <- NULL
-        wlDataOffset=NULL
-      }
       
       #      # parse the flood mapping inputs
       #      if(nchar(flData)>1){
@@ -591,19 +617,29 @@ getHypeAppInput<-function(appName){
       #      flDataURL=NULL
       #      flDataSubid=NULL
       #      }
-    }else{
-      wlDataNum    <- 0
-      wlDataInput  <- F
-      wlDataURL    <- NULL
-      wlDataSubid  <- NULL
-      wlDataVariable <- NULL
-      wlDataVariable.name <- NULL
-      wlDataVariable.unit <- NULL
-      wlDataOffset <- NULL
+      }else{
+        wlDataNum    <- 0
+        wlDataInput  <- F
+        wlDataURL    <- NULL
+        wlDataSubid  <- NULL
+        wlDataVariable <- NULL
+        wlDataVariable.name <- NULL
+        wlDataVariable.unit <- NULL
+        wlDataOffset <- NULL
       #     flDataNum    <- 0
       #     flDataInput  <- F
       #     flDataURL    <- NULL
       #     flDataSubid  <- NULL
+      }
+    }else{
+      wlDataNum=0
+      wlDataInput=F
+      wlDataURL=NULL
+      wlDataSubid=NULL
+      wlDataVariable=NULL
+      wlDataVariable.name <- NULL
+      wlDataVariable.unit <- NULL
+      wlDataOffset=NULL
     }
     appInput=list("wlDataNum"=wlDataNum,
                   "wlDataInput"=wlDataInput,
@@ -629,7 +665,7 @@ getHypeAppInput<-function(appName){
 getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,modelFilesURL,forcingArchiveURL=NULL,stateFilesURL=NULL,stateFilesIN=NULL){
   
   ## model files run directory (for all applications, except returnperiod)
-  if(appName=="historical"|appName=="forecast"|appName=="eodata"){
+  if(appName=="historical"|appName=="forecast"|appName=="eodata"|appName=="returnperiod"){
     modelFilesRunDir=paste(tmpDir,'model',modelName,sep="/")
     dir.create(modelFilesRunDir,recursive = T,showWarnings = F)
   }else{
@@ -660,7 +696,7 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
   
   # return period run directory
   if(appName=="returnperiod"){
-    returnperiodResDir=paste(tmpDir,"returnperiod",sep="/")
+    returnperiodResDir=paste(modelFilesRunDir,"returnperiod",sep="/")
     dir.create(returnperiodResDir,recursive = T,showWarnings = F)
   }else{
     returnperiodResDir=NULL
