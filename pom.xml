@@ -11,11 +11,11 @@
     <version>2.0.0</version>
   </parent>
   <description>H-TEP Hydrological Modelling Application - 10 day forecast</description>
-  <version>1.1</version>
+  <version>1.2</version>
   <properties>
     <summary>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</summary>
     <description>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</description>
-    <community>hydro-tep</community>
+    <community>hydrology-tep</community>
     <yumRepo>hydrology-tep</yumRepo>
   </properties>
   <scm>
@@ -51,6 +51,8 @@
                     <require>openjpeg2</require>
                     <require>proj</require>
                     <require>libgfortran</require>
+                    <require>ghostscript-fonts</require>
+                    <require>urw-fonts</require>
                   </requires>
                   <postinstallScriptlet combine.self="override">
                     <scriptFile>${basedir}/src/main/app-resources/scripts/postinstall.sh</scriptFile>
