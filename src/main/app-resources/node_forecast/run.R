@@ -16,7 +16,7 @@
 
 # Application 1: "Niger-HYPE 10 day forecast" (hypeapps-forecast)
 # Author:         David Gustafsson, SMHI
-# Version:        2017-09-21
+# Version:        2017-11-08
 
 # Workflow overview:
 # ------------------
@@ -61,6 +61,9 @@ if(app.sys=="tep"){
   source("application/util/R/hypeapps-environment.R")  
   source("application/util/R/hypeapps-utils.R")
 }
+## open application logfile
+logFile=appLogOpen(appName = app.name,tmpDir = getwd())
+
 #################################################################################
 ## 2 - Application user inputs
 ## ------------------------------------------------------------------------------
@@ -68,6 +71,7 @@ if(app.sys=="tep"){
 app.input <- getHypeAppInput(appName = app.name)
 
 if(app.sys=="tep"){rciop.log ("DEBUG", paste(" hypeapps inputs and parameters read"), "/node_forecast/run.R")}
+log.res=appLogWrite(logText = "Inputs and parameters read",fileConn = logFile$fileConn)
 
 #################################################################################
 ## 3 - Application setup
@@ -85,6 +89,7 @@ app.setup <- getHypeAppSetup(modelName = model.name,
                              stateFilesIN = state.files)
 
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("HypeApp setup read"), "/node_forecast/run.R")}
+log.res=appLogWrite(logText = "HypeApp setup read",fileConn = logFile$fileConn)
 
 #################################################################################
 ## 4 - Hindcast input data
@@ -96,18 +101,21 @@ hindcast.forcing <- getModelForcing(appSetup   = app.setup,
                                     hindcast   = T)
 
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("hindcast forcing set"), "/node_forecast/run.R")}
+log.res=appLogWrite(logText = "Hindcast forcing data downloaded and prepared",fileConn = logFile$fileConn)
 
 ## ------------------------------------------------------------------------------
 ## get Xobs input file(s) from open catalogue
 xobs.data <- getXobsData(appInput = app.input,
                          appSetup = app.setup)
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("xobs data downloaded from catalogue"), "/node_historical/run.R")}
+log.res=appLogWrite(logText = "xobs data (if any) downloaded from catalogue",fileConn = logFile$fileConn)
 
 ## ------------------------------------------------------------------------------
 ## read downloaded Xobs input file(s) - merge into one Xobs.txt in the model run folder
 xobs.input <- readXobsData(appSetup = app.setup,
                            xobsData = xobs.data)
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("xobs data merged to model rundir"), "/node_historical/run.R")}
+log.res=appLogWrite(logText = "Xobs data (if any) merged into model directory",fileConn = logFile$fileConn)
 
 ## ------------------------------------------------------------------------------
 ## modify some model files based on input parameters
@@ -115,6 +123,7 @@ hindcast.input <- updateModelInput(appSetup = app.setup, appInput = app.input,
                                    hindcast = T, modelForcing = hindcast.forcing, xobsInput = xobs.input)
 
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("hindcast inputs modified"), "/node_forecast/run.R")}
+log.res=appLogWrite(logText = "hindcast model inputs modified",fileConn = logFile$fileConn)
 
 #################################################################################
 ## 5 - Run hindcast
@@ -122,9 +131,16 @@ if(app.sys=="tep"){rciop.log ("DEBUG", paste("hindcast inputs modified"), "/node
 ##  run hindcast
 if(hindcast.input==0){
   if(app.sys=="tep"){rciop.log ("DEBUG", " ...starting hindcast model run", "/node_forecast/run.R")}
+  log.res=appLogWrite(logText = "starting hindcast model run ...",fileConn = logFile$fileConn)
+
   hindcast.run = system(command = app.setup$runCommand,intern = T)
+  
+  log.res=appLogWrite(logText = "... hindcast model run ready",fileConn = logFile$fileConn)
+  if(app.sys=="tep"){rciop.log ("DEBUG", " ...hindcast model run ready", "/node_forecast/run.R")}
+  
+}else{
+  log.res=appLogWrite(logText = "something wrong with hindcast model inputs (no run)",fileConn = logFile$fileConn)
 }
-if(app.sys=="tep"){rciop.log ("DEBUG", " ...hindcast model run ready", "/node_forecast/run.R")}
 
 #################################################################################
 ## 6 - Forecast input data
@@ -136,6 +152,7 @@ forecast.forcing <- getModelForcing(appSetup   = app.setup,
                                     hindcast   = F)
 
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("...forecast forcing set"), "/node_forecast/run.R")}
+log.res=appLogWrite(logText = "forecast model forcing data downloaded and prepared",fileConn = logFile$fileConn)
 
 ## ------------------------------------------------------------------------------
 ## modify some model files based on input parameters
@@ -143,6 +160,7 @@ forecast.input <- updateModelInput(appSetup = app.setup, appInput = app.input,
                                    hindcast = F, modelForcing = forecast.forcing, xobsInput = NULL)
 
 if(app.sys=="tep"){rciop.log ("DEBUG", paste("...forecast inputs modified"), "/node_forecast/run.R")}
+log.res=appLogWrite(logText = "forecast model input files modified",fileConn = logFile$fileConn)
 
 #################################################################################
 ## 7 - Run forecast
@@ -150,9 +168,15 @@ if(app.sys=="tep"){rciop.log ("DEBUG", paste("...forecast inputs modified"), "/n
 ##  run model
 if(forecast.input==0){
   if(app.sys=="tep"){rciop.log ("DEBUG", " ...starting forecast model run", "/node_forecast/run.R")}
+  log.res=appLogWrite(logText = "starting forecast model run ...",fileConn = logFile$fileConn)
+
   forecast.run = system(command = app.setup$runCommand,intern = T)
+
+  log.res=appLogWrite(logText = "... forecast model run ready",fileConn = logFile$fileConn)
+  if(app.sys=="tep"){rciop.log ("DEBUG", " ...forecast model run ready", "/node_forecast/run.R")}
+}else{
+  log.res=appLogWrite(logText = "something wrong with forecast model inputs (no run)",fileConn = logFile$fileConn)
 }
-if(app.sys=="tep"){rciop.log ("DEBUG", " ...forecast model run ready", "/node_forecast/run.R")}
 
 #################################################################################
 ## 8 - Output
@@ -164,6 +188,7 @@ if(app.sys=="tep"){rciop.log ("DEBUG", " ...forecast model run ready", "/node_fo
 app.outdir <- prepareHypeAppsOutput(appSetup  = app.setup, appInput = app.input, 
                                     modelInput = forecast.input, modelForcing = forecast.forcing,
                                     runRes = attr(forecast.run,"status"))
+log.res=appLogWrite(logText = "HypeApp outputs prepared",fileConn = logFile$fileConn)
 
 ## ------------------------------------------------------------------------------
 ## publish postprocessed results
@@ -171,7 +196,15 @@ if(app.sys=="tep"){
   for(k in 1:length(app.outdir)){
     rciop.publish(path=paste(app.outdir[k],"/*",sep=""), recursive=FALSE, metalink=TRUE)
   }
+  log.res=appLogWrite(logText = "HypeApp outputs published",fileConn = logFile$fileConn)
 }
+
+## close and publish the logfile
+log.file=appLogClose(appName = app.name,fileConn = logFile$fileConn)
+if(app.sys=="tep"){
+  rciop.publish(path=logFile$fileName, recursive=FALSE, metalink=TRUE)
+}
+
 #}
 #################################################################################
 ## 9 - End of workflow
