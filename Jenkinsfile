@@ -23,10 +23,6 @@ pipeline {
         withMaven( maven: 'apache-maven-3.0.5' ) {
             sh 'mvn -B deploy'
         }
-
-        script {
-          artserver.publishBuildInfo buildInfo
-        }
       }
     }
   }
