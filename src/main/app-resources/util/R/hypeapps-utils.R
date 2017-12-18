@@ -16,7 +16,7 @@
 #
 # hypeapps-utils.R: R tools for the HTEP hydrological modelling application 
 # Author:           David Gustafsson, SMHI
-# Version:          2017-11-08
+# Version:          2017-11-14  
 #
 
 ## --------------------------------------------------------------------------------
@@ -94,13 +94,16 @@ getHypeAppInput<-function(appName){
         oName=splitFirst[1]
         splitSecond = trimws(strsplit(splitFirst[2],split = ")",fixed=T)[[1]])
         oUnit=splitSecond[1]
-        oID=splitSecond[2]
+        oID=substr(splitSecond[2],nchar(splitSecond[2])-3,nchar(splitSecond[2]))
+        oName2=substr(splitSecond[2],1,nchar(splitSecond[2])-5)
         if(i==1){
           outvars.name=oName
+          outvars.name2=oName2
           outvars.unit=oUnit
           outvars.id=oID
         }else{
           outvars.name=c(outvars.name,oName)
+          outvars.name2=c(outvars.name2,oName2)
           outvars.unit=c(outvars.unit,oUnit)
           outvars.id=c(outvars.id,oID)
         }
@@ -108,16 +111,17 @@ getHypeAppInput<-function(appName){
       outvars.num=nOut
       outvars=outvars.id[1]
       if(nOut>1){
-        for(i in 1:(nOut-1)){
-          outvars=paste(outvars,outvars.id[i+1],sep=",")
+        for(i in 2:nOut){
+          outvars=paste(outvars,outvars.id[i],sep=",")
         }
       }
       # parse the basinselect and basinset intputs
       basinSplit = trimws(strsplit(basinselect,split = ",")[[1]])
       nBasin=length(basinSplit)
       for(i in 1:nBasin){
-        bName=substr(basinSplit[i],1,nchar(basinSplit[i])-5)
-        bID=substr(basinSplit[i],nchar(basinSplit[i])-3,nchar(basinSplit[i]))
+        basinSplit2=trimws(strsplit(basinSplit[i],split = " ")[[1]])
+        bID=basinSplit2[length(basinSplit2)]
+        bName=substr(basinSplit[i],1,nchar(basinSplit[i])-nchar(bID)-1)
         if(i==1){
           basins.name=bName
           basins.id=bID
@@ -148,7 +152,6 @@ getHypeAppInput<-function(appName){
           }      
         }
       }
-      
       # If xobs !=-9999, parse the input to URLs
       if(length(xobs)>0){
         xobsNum=0
@@ -173,7 +176,7 @@ getHypeAppInput<-function(appName){
       
       # parse the AssimVarIn input
       if(assimOn=="on"){
-        # <option>Lake Water Level - altimetry, AOWL, WCOM</option>
+        # <option>Lake Water Level - altimetry AOWL WCOM</option>
         assimVarSplit = trimws(strsplit(assimVarIN,split = ",")[[1]])
         nOut=length(assimVarSplit)
         for(i in 1:nOut){
@@ -253,6 +256,7 @@ getHypeAppInput<-function(appName){
       "edate"     = edate,
       "outvars"   = outvars,
       "outvars.name" = outvars.name,
+      "outvars.name2" = outvars.name2,
       "outvars.unit" = outvars.unit,
       "outvars.id"   = outvars.id,
       "outvars.num"  = outvars.num,
@@ -289,13 +293,16 @@ getHypeAppInput<-function(appName){
         oName=splitFirst[1]
         splitSecond = trimws(strsplit(splitFirst[2],split = ")",fixed=T)[[1]])
         oUnit=splitSecond[1]
-        oID=splitSecond[2]
+        oID=substr(splitSecond[2],nchar(splitSecond[2])-3,nchar(splitSecond[2]))
+        oName2=substr(splitSecond[2],1,nchar(splitSecond[2])-5)
         if(i==1){
           outvars.name=oName
+          outvars.name2=oName2
           outvars.unit=oUnit
           outvars.id=oID
         }else{
           outvars.name=c(outvars.name,oName)
+          outvars.name2=c(outvars.name2,oName2)
           outvars.unit=c(outvars.unit,oUnit)
           outvars.id=c(outvars.id,oID)
         }
@@ -303,16 +310,17 @@ getHypeAppInput<-function(appName){
       outvars.num=nOut
       outvars=outvars.id[1]
       if(nOut>1){
-        for(i in 1:(nOut-1)){
-          outvars=paste(outvars,outvars.id[i+1],sep=",")
+        for(i in 2:nOut){
+          outvars=paste(outvars,outvars.id[i],sep=",")
         }
       }
       # parse the basinselect and basinset intputs
       basinSplit = trimws(strsplit(basinselect,split = ",")[[1]])
       nBasin=length(basinSplit)
       for(i in 1:nBasin){
-        bName=substr(basinSplit[i],1,nchar(basinSplit[i])-5)
-        bID=substr(basinSplit[i],nchar(basinSplit[i])-3,nchar(basinSplit[i]))
+        basinSplit2=trimws(strsplit(basinSplit[i],split = " ")[[1]])
+        bID=basinSplit2[length(basinSplit2)]
+        bName=substr(basinSplit[i],1,nchar(basinSplit[i])-nchar(bID)-1)
         if(i==1){
           basins.name=bName
           basins.id=bID
@@ -343,7 +351,6 @@ getHypeAppInput<-function(appName){
           }      
         }
       }
-      
       # If xobs !=-9999, parse the input to URLs
       if(length(xobs)>0){
         xobsNum=0
@@ -368,7 +375,7 @@ getHypeAppInput<-function(appName){
       
       # parse the AssimVarIn input
       if(assimOn=="on"){
-        # <option>Lake Water Level - altimetry, AOWL, WCOM</option>
+        # <option>Lake Water Level - altimetry AOWL WCOM</option>
         assimVarSplit = trimws(strsplit(assimVarIN,split = ",")[[1]])
         nOut=length(assimVarSplit)
         for(i in 1:nOut){
@@ -415,7 +422,7 @@ getHypeAppInput<-function(appName){
         xobsNum=0
         xobsURL=NULL
         assimOn   <- "off"         # Assimilation on/off
-        assimVar  <- "9999,9999" # Assimilation variables (pairs, obs/sim)
+        assimVar  <- "9999,9999"   # Assimilation variables (pairs, obs/sim)
       }else{
         idate     <- win.idate  # Forecast issue date
         outvars   <- win.outvars  # Output variables
@@ -443,6 +450,7 @@ getHypeAppInput<-function(appName){
     appInput=list("idate"     = idate,     # Forecast issue date
                   "outvars"   = outvars,   # Output variables
                   "outvars.name" = outvars.name,
+                  "outvars.name2" = outvars.name2,
                   "outvars.unit" = outvars.unit,
                   "outvars.id"   = outvars.id,
                   "outvars.num"  = outvars.num,
@@ -545,11 +553,6 @@ getHypeAppInput<-function(appName){
             # variables:
             wlDataVariableTemp=trimws(strsplit(wlVariable,",")[[1]])
             nVar=length(wlDataVariableTemp)
-            wlDataVariable.name=wlDataVariableTemp[seq(1,nVar*3-2,3)]
-            wlDataVariable.unit=wlDataVariableTemp[seq(2,nVar*3-1,3)]
-            wlDataVariable     =wlDataVariableTemp[seq(3,nVar*3,3)]
-            
-            
             for(i in 1:nVar){
               splitFirst = trimws(strsplit(wlDataVariableTemp[i],split = "(",fixed=T)[[1]])
               oName=splitFirst[1]
@@ -1021,16 +1024,27 @@ readXobsData<-function(appSetup,xobsData){
       xobs.data = ReadXobs(filename = xobsData$xobsFile[1])
       xobs.var  = unique(attr(xobs.data,"variable"))
       xobs.subid= unique(attr(xobs.data,"subid"))
-      # output list
-      xobsInput = list("xobsFile"=paste(appSetup$runDir,"Xobs.txt",sep="/"),
+      if(is.na(xobs.var[1])){
+        if(app.sys=="tep"){rciop.log("DEBUG", paste(" somethings wrong with Xobs.txt content, xobs.var =  ",xobs.var,sep=""), "/util/R/hypeapps-utils.R")}
+        if(app.sys=="tep"){rciop.log("DEBUG", paste(" somethings wrong with Xobs.txt content, xobs.subid =  ",xobs.subid,sep=""), "/util/R/hypeapps-utils.R")}
+      }else{
+        if(app.sys=="tep"){rciop.log("DEBUG", paste(" Xobs.txt content, xobs.var =  ",xobs.var,sep=""), "/util/R/hypeapps-utils.R")}
+        if(app.sys=="tep"){rciop.log("DEBUG", paste(" Xobs.txt content, xobs.subid =  ",xobs.subid,sep=""), "/util/R/hypeapps-utils.R")}
+        # output list
+        xobsInput = list("xobsFile"=paste(appSetup$runDir,"Xobs.txt",sep="/"),
                        "xobsVar"=xobs.var,
                        "xobsSubid"=xobs.subid)
+      }
     }else{
+      if(app.sys=="tep"){rciop.log("DEBUG", paste(" Xobs.txt did not exist: ",xobsData$xobsFile[1],sep=""), "/util/R/hypeapps-utils.R")}
+
       xobsInput = list("xobsFile"=NA,
                        "xobsVar"=NA,
                        "xobsSubid"=NA)
     }
   }else{
+    if(app.sys=="tep"){rciop.log("DEBUG", paste(" xobsNum = 0, no xobs file given on input: ",as.character(xobsData$xobsNum),sep=""), "/util/R/hypeapps-utils.R")}
+    
     xobsInput = list("xobsFile"=NA,
                      "xobsVar"=NA,
                      "xobsSubid"=NA)
@@ -2008,13 +2022,27 @@ updateModelInput<-function(appSetup=NULL,appInput=NULL,hindcast=NULL,modelForcin
     if(app.sys=="tep"){rciop.log ("DEBUG", paste("  edate=",as.character(modelForcing$edate),sep=" "), "/util/R/hypeapps-utils.R")}
     
     
-    # output variables (from appInput and from xobsInput)
-    outputVariables = strsplit(appInput$outvars,split = ",")[[1]]
-    if(!is.null(xobsInput)){
-      if(!is.na(xobsInput$xobsVar)){
-        outputVariables = tolower(unique(c(outputVariables,xobsInput$xobsVar)))
+    # output variables (from appInput, xobsInput, and assimVar)
+    outputVariables = strsplit(appInput$outvars,split = ",")[[1]] # from appInput
+    if(!is.null(xobsInput)){                                      # from xobsInput
+      for(i in 1:length(xobsInput$xobsVar)){
+        if(!is.na(xobsInput$xobsVar[i])){
+          outputVariables = c(outputVariables,xobsInput$xobsVar[i])
+        }
       }
     }
+    if(appInput$assimOn=="on"){                                   # from assimVar
+      for(i in 1:length(appInput$assimVar)){
+        if(appInput$assimVar[i]!="9999,9999" & 
+           appInput$assimVar[i]!="OPEN,LOOP" & 
+           nchar(appInput$assimVar[i])==9){
+          assimVariables=strsplit(appInput$assimVar[i],split = ",")
+          outputVariables = c(outputVariables,assimVariables)
+        }
+      }
+    }
+    outputVariables = tolower(outputVariables)
+    outputVariables = unique(outputVariables)
     if(length(outputVariables)>1){
       outVariables=outputVariables[1]
       for(i in 2:length(outputVariables)){
@@ -2027,8 +2055,10 @@ updateModelInput<-function(appSetup=NULL,appInput=NULL,hindcast=NULL,modelForcin
     # output basins (from appInput and from xobsInput)
     outputBasins = as.integer(strsplit(appInput$outbasins,split=",")[[1]])
     if(!is.null(xobsInput)){
-      if(!is.na(xobsInput$xobsSubid)){
-        outputBasins = unique(outputBasins,xobsInput$xobsSubid)
+      for(i in 1:length(xobsInput$xobsSubid)){
+        if(!is.na(xobsInput$xobsSubid[i])){
+          outputBasins = unique(outputBasins,xobsInput$xobsSubid[i])
+        }        
       }
     }
     if(length(outputBasins)>1){
@@ -2105,13 +2135,27 @@ updateModelInput<-function(appSetup=NULL,appInput=NULL,hindcast=NULL,modelForcin
     info$info.lines[info$cdate.lineNr]=paste('cdate',DATE2INFODATE(modelForcing$cdate),sep=" ")
     info$info.lines[info$edate.lineNr]=paste('edate',DATE2INFODATE(modelForcing$edate),sep=" ")
     
-    # output variables (from appInput and from xobsInput)
-    outputVariables = strsplit(appInput$outvars,split = ",")[[1]]
-    if(!is.null(xobsInput)){
-      if(!is.na(xobsInput$xobsVar)){
-        outputVariables = tolower(unique(c(outputVariables,xobsInput$xobsVar)))
+    # output variables (from appInput, xobsInput, and assimVar)
+    outputVariables = strsplit(appInput$outvars,split = ",")[[1]] # from appInput
+    if(!is.null(xobsInput)){                                      # from xobsInput
+      for(i in 1:length(xobsInput$xobsVar)){
+        if(!is.na(xobsInput$xobsVar[i])){
+          outputVariables = c(outputVariables,xobsInput$xobsVar[i])
+        }
       }
     }
+    if(appInput$assimOn=="on"){                                   # from assimVar
+      for(i in 1:length(appInput$assimVar)){
+        if(appInput$assimVar[i]!="9999,9999" & 
+           appInput$assimVar[i]!="OPEN,LOOP" & 
+           nchar(appInput$assimVar[i])==9){
+          assimVariables=strsplit(appInput$assimVar[i],split = ",")
+          outputVariables = c(outputVariables,assimVariables)
+        }
+      }
+    }
+    outputVariables = tolower(outputVariables)
+    outputVariables = unique(outputVariables)
     if(length(outputVariables)>1){
       outVariables=outputVariables[1]
       for(i in 2:length(outputVariables)){
@@ -2124,8 +2168,10 @@ updateModelInput<-function(appSetup=NULL,appInput=NULL,hindcast=NULL,modelForcin
     # output basins (from appInput and from xobsInput)
     outputBasins = as.integer(strsplit(appInput$outbasins,split=",")[[1]])
     if(!is.null(xobsInput)){
-      if(!is.na(xobsInput$xobsSubid)){
-        outputBasins = unique(outputBasins,xobsInput$xobsSubid)
+      for(i in 1:length(xobsInput$xobsSubid)){
+        if(!is.na(xobsInput$xobsSubid[i])){
+          outputBasins = unique(outputBasins,xobsInput$xobsSubid[i])
+        }        
       }
     }
     if(length(outputBasins)>1){
@@ -2136,6 +2182,7 @@ updateModelInput<-function(appSetup=NULL,appInput=NULL,hindcast=NULL,modelForcin
     }else{
       outBasins=as.character(outputBasins)
     }
+    
     
     # basinoutput
     info$info.lines[info$basinoutput_variable.lineNr]=paste('basinoutput variable',gsub(pattern=",",replacement = " ",outVariables),sep=" ")
