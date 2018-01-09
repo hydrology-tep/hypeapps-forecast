@@ -185,17 +185,27 @@ if(forecast.input==0){
 #if(attr(forecast.run,"status")==1){
 #  rciop.publish(paste(app.setup$runDir,"/*",sep=""),recursive=TRUE,metalink=TRUE) 
 #}else{
-app.outdir <- prepareHypeAppsOutput(appSetup  = app.setup, appInput = app.input, 
+#app.outdir <- prepareHypeAppsOutput(appSetup  = app.setup, appInput = app.input, 
+#                                    modelInput = forecast.input, modelForcing = forecast.forcing,
+#                                    runRes = attr(forecast.run,"status"))
+app.outfiles <- prepareHypeAppsOutput(appSetup  = app.setup, appInput = app.input, 
                                     modelInput = forecast.input, modelForcing = forecast.forcing,
                                     runRes = attr(forecast.run,"status"))
+if(length(app.outfiles)>1){
+  app.outfiles=sort(app.outfiles,decreasing = F)
+}
 log.res=appLogWrite(logText = "HypeApp outputs prepared",fileConn = logFile$fileConn)
 
 ## ------------------------------------------------------------------------------
 ## publish postprocessed results
 if(app.sys=="tep"){
-  for(k in 1:length(app.outdir)){
-    rciop.publish(path=paste(app.outdir[k],"/*",sep=""), recursive=FALSE, metalink=TRUE)
-  }
+#  for(k in 1:length(app.outdir)){
+#    rciop.publish(path=paste(app.outdir[k],"/*",sep=""), recursive=FALSE, metalink=TRUE)
+#  }
+    for(k in 1:length(app.outfiles)){
+      rciop.publish(path=app.outfiles[k], recursive=FALSE, metalink=TRUE)
+    }
+  
   log.res=appLogWrite(logText = "HypeApp outputs published",fileConn = logFile$fileConn)
 }
 
