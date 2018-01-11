@@ -1144,12 +1144,12 @@ ID2ZF<-function(idpsx){
 ## ymd2str - function to return date string "yyyy-mm-dd" from integer year, month day
 ymd2str<-function(yr,mn,da){
   dateStr=as.character(yr)
-  if(mn>10){
+  if(mn>=10){
     dateStr=paste(dateStr,"-",as.character(mn),sep="")
   }else{
     dateStr=paste(dateStr,"-0",as.character(mn),sep="")
   }
-  if(da>10){
+  if(da>=10){
     dateStr=paste(dateStr,"-",as.character(da),sep="")
   }else{
     dateStr=paste(dateStr,"-0",as.character(da),sep="")
@@ -2529,6 +2529,9 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
         }
       }
     }
+    ## list all files in output folder:
+    outFiles=dir(outDir,all.files = F,full.names = T,recursive = F)
+    
   }else if(appSetup$appName=="forecast"){
     
     # add hindcast and forecast subfolders to outDir
@@ -2540,12 +2543,18 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
     # loop over hindcast and forecast
     for(k in 1:2){
       
+      if(k==1){
+        prodTag="hindcast"
+      }else{
+        prodTag="forecast"
+      }
+        
       # copy log-files from rundir to outdirs
       hyssLogFile = dir(path = appSetup$runDir , pattern =".log")
       if(app.sys=="tep"){
         if(length(hyssLogFile)>=k){
           file.copy(from = paste(appSetup$runDir,hyssLogFile[k],sep="/"), 
-                    to = paste(outDir[k],paste(prefix.log,hyssLogFile[k],sep="_"),sep="/"))
+                    to = paste(outDir[k],paste(prefix.log,prodTag,hyssLogFile[k],sep="_"),sep="/"))
         }
       }
       
@@ -2561,7 +2570,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
         for(i in 1:length(timeFiles)){
           if(app.sys=="tep"){
             file.copy(from = paste(appSetup$resDir[k],timeFiles[i],sep="/"), 
-                      to = paste(outDir[k],paste(prefix.tim,timeFiles[i],sep="_"),sep="/"))
+                      to = paste(outDir[k],paste(prefix.tim,prodTag,timeFiles[i],sep="_"),sep="/"))
           }
         }
       }
@@ -2570,7 +2579,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
         for(i in 1:length(mapFiles)){
           if(app.sys=="tep"){
             file.copy(from = paste(appSetup$resDir[k],mapFiles[i],sep="/"), 
-                      to = paste(outDir[k],paste(prefix.map,mapFiles[i],sep="_"),sep="/"))
+                      to = paste(outDir[k],paste(prefix.map,prodTag,mapFiles[i],sep="_"),sep="/"))
           }
         }
       }
@@ -2579,7 +2588,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
         for(i in 1:length(subassFiles)){
           if(app.sys=="tep"){
             file.copy(from = paste(appSetup$resDir[k],subassFiles[i],sep="/"), 
-                      to = paste(outDir[k],paste(prefix.oth,subassFiles[i],sep="_"),sep="/"))
+                      to = paste(outDir[k],paste(prefix.oth,prodTag,subassFiles[i],sep="_"),sep="/"))
           }
         }
       }
@@ -2587,7 +2596,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
       if(length(simassFile)>0){
         if(app.sys=="tep"){
           file.copy(from = paste(appSetup$resDir[k],simassFile[i],sep="/"), 
-                    to = paste(outDir[k],paste(prefix.oth,simassFile[i],sep="_"),sep="/"))
+                    to = paste(outDir[k],paste(prefix.oth,prodTag,simassFile[i],sep="_"),sep="/"))
         }
       }
       
@@ -2607,14 +2616,14 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
                   if(substr(allFiles[j],1,nj-ni)==substr(zeroString,1,nj-ni)){
                     if(app.sys=="tep"){
                       file.copy(from = paste(appSetup$resDir[k],allFiles[j],sep="/"), 
-                                to = paste(outDir[k],paste(prefix.bas,allFiles[j],sep="_"),sep="/"))
+                                to = paste(outDir[k],paste(prefix.bas,prodTag,allFiles[j],sep="_"),sep="/"))
                       basinFiles=c(basinFiles,allFiles[j])
                     }
                   }
                 }else{
                   if(app.sys=="tep"){
                     file.copy(from = paste(appSetup$resDir[k],allFiles[j],sep="/"), 
-                              to = paste(outDir[k],paste(prefix.bas,allFiles[j],sep="_"),sep="/"))
+                              to = paste(outDir[k],paste(prefix.bas,prodTag,allFiles[j],sep="_"),sep="/"))
                     basinFiles=c(basinFiles,allFiles[j])
                   }
                 }
@@ -2627,7 +2636,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
       if(length(basinFiles)>0){
         for(i in 1:length(basinFiles)){
           resCsv = basinfiles2csv(hypeFile=paste(appSetup$resDir[k],basinFiles[i],sep="/"),
-                                  csvFile=paste(outDir[k],paste(prefix.csv,"_",substr(basinFiles[i],1,nchar(basinFiles[i])-3),"csv",sep=""),sep="/"),
+                                  csvFile=paste(outDir[k],paste(prefix.csv,"_",prodTag,"_",substr(basinFiles[i],1,nchar(basinFiles[i])-3),"csv",sep=""),sep="/"),
                                   hype2csvFile=hype2csvFile,assimOn=appInput$assimOn)
         }
       }
@@ -2654,7 +2663,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
                              appSetup$modelName,
                              hype2csvFile,
                              rpFile,
-                             prefix.img,
+                             paste(prefix.img,"_forecast",sep=""),
                              sep=" ")
               if(app.sys=="tep"){rciop.log ("DEBUG", paste(" trying forecast basin plot script:  ",syscmd,sep=""), "/util/R/hypeapps-utils.R")}
               plotres = system(command = syscmd,intern = T)
@@ -2677,8 +2686,8 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
           name.hypeout = "timeCOUT.txt"
           if(file.exists(paste(appSetup$resDir[2],name.hypeout,sep="/"))){
             name.retlev  = appSetup$rpFileCOUT
-            name.wl.txt  = paste(prefix.wl.txt,"_mapWarningLevel.txt",sep="")
-            name.wl.png  = paste(prefix.wl.png,"_mapWarningLevel.png",sep="")
+            name.wl.txt  = paste(prefix.wl.txt,"_forecast_mapWarningLevel.txt",sep="")
+            name.wl.png  = paste(prefix.wl.png,"_forecast_mapWarningLevel.png",sep="")
             rdataFile    = appSetup$shapefileRdata
           
             syscmd = paste(app.rscript4plotting,"--vanilla --slave --quite",
@@ -2699,10 +2708,19 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
         }
       }  
     }
-    outDir = paste(appSetup$tmpDir,'output',sep="/")
+    #outDir = paste(appSetup$tmpDir,'output',sep="/")
+    
+    ## list all files in output folders:
+    outFiles=dir(outDir[1],all.files = F,full.names = T,recursive = F)
+    outFiles=c(outFiles,dir(outDir[2],all.files = F,full.names = T,recursive = F))
+    
   }
-  ## return outDir
-  return(outDir)
+#  ## return outDir
+#  return(outDir)
+
+  ## return outFiles
+  return(outFiles)
+  
 }
 
 # functions for application logfile that will be published as part of application results
