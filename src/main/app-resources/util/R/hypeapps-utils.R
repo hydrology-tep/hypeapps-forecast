@@ -16,7 +16,7 @@
 #
 # hypeapps-utils.R: R tools for the HTEP hydrological modelling application 
 # Author:           David Gustafsson, SMHI
-# Version:          2017-11-14  
+# Version:          2018-01-18  
 #
 
 ## --------------------------------------------------------------------------------
@@ -483,7 +483,7 @@ getHypeAppInput<-function(appName){
             # update the number of timeFileNum inputs
             timeFileNum=timeFileNum+1
             
-            # extract the URL from xobs input string:
+            # extract the URL from input string:
             if(timeFileNum==1){
               timeFileURL=strsplit(timeFileIN[i],split = "&")[[1]][1]
             }else{
@@ -794,7 +794,7 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
       rciop.copy(paste(paste(shapefile.url,shapefile.layer,sep="/"),shapefile.ext[i],sep=""), shapefileDir)
     }
     
-    #open and save shapefile as Rdata
+    # open and save shapefile as Rdata
     shapefileData = readOGR(dsn = shapefileDir, layer = shapefile.layer)
     shapefileRdata = paste(shapefileDir,"/",shapefile.layer,".Rdata",sep="")
     save(list = "shapefileData",file = shapefileRdata)
@@ -816,8 +816,26 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
       rpFileCOUT = paste(modelResDir[2],paste(paste(modelName,"-rp-cout.txt",sep="")),sep="/")
     }else{
       # download the user input file to /tmp
-      sysCmd=paste("opensearch-client",appInput$rpfile,"enclosure | ciop-copy -s -U -O /tmp/ -", sep=" ")
-      rpFileCOUT=system(command = sysCmd,intern = T)
+      
+        #sysCmd=paste("opensearch-client",appInput$rpfile,"enclosure | ciop-copy -s -U -O /tmp/ -", sep=" ")
+        #rpFileCOUT=system(command = sysCmd,intern = T)
+      
+      # using rciop-copy
+      {
+        # make subfolder for download:
+        targetFolder = paste(appSetup$tmpDir,"/rpFile_1",sep="")
+        dir.create(targetFolder,recursive = T,showWarnings = F)
+        
+        # download file
+        download.res = rciop.copy(url = appInput$rpfile[1], target = targetFolder)
+        
+        # path to downloaded file
+        if(download.res$exit.code==0){
+          rpFileCOUT <- download.res$output
+        }else{
+          rpFileCOUT = "download failed"
+        }
+      }
     }
     # check existance of rpFileCOUT and check available return periods in the file
     if(!file.exists(rpFileCOUT)){
@@ -856,7 +874,7 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
 }
 
 ## -------------------------------------------------------------------------------
-## get eo data from open catalogue
+## get eo data from URL
 getEoData<-function(appInput,appSetup){
   
   #  appInput=list("wlDataNum"=wlDataNum
@@ -881,8 +899,28 @@ getEoData<-function(appInput,appSetup){
   if(appInput$wlDataNum>0){
     for(i in 1:appInput$wlDataNum){
       # download data
-      sysCmd=paste("opensearch-client",appInput$wlDataURL[i],"enclosure | ciop-copy -s -U -O /tmp/ -", sep=" ")
-      wlFile=system(command = sysCmd,intern = T)
+      
+      # using opensearch-client
+      #sysCmd=paste("opensearch-client",appInput$wlDataURL[i],"enclosure | ciop-copy -s -U -O /tmp/ -", sep=" ")
+      #wlFile=system(command = sysCmd,intern = T)
+      
+      # using rciop-copy
+      {
+        # make subfolder for download:
+        targetFolder = paste(appSetup$tmpDir,"/wlData_",as.character(i),sep="")
+        dir.create(targetFolder,recursive = T,showWarnings = F)
+        
+        # download file
+        download.res = rciop.copy(url = appInput$wlDataURL[i], target = targetFolder)
+        
+        # path to downloaded file
+        if(download.res$exit.code==0){
+          wlFile <- download.res$output
+        }else{
+          wlFile = "download failed"
+        }
+      }
+      
       if(file.exists(wlFile)){
         nDownLoad=nDownLoad+1
         if(nDownLoad==1){
@@ -952,14 +990,18 @@ readEoData<-function(appSetup,eoData){
 
 ## -------------------------------------------------------------------------------
 ## write eo data in Xobs format
-writeEoData<-function(appSetup,xobsData){
+writeEoData<-function(appSetup,xobsData,appDate){
   
   # Create folder for data to be published
   outDir = paste(appSetup$tmpDir,'output',sep="/")
   dir.create(outDir,recursive = T,showWarnings = F)
   
+  # variable and subid to include in output filename (we use only the first variable and subid)
+  varName=attr(xobsData,"variable")[1]
+  subID=as.character(attr(xobsData,"subid")[1])
+  
   # output filename
-  xobsFile=paste(outDir,"Xobs-eodata.txt",sep="/")
+  xobsFile=paste(outDir,"/Xobs_",varName,"_",subID,"_",appDate,".txt",sep="")
   
   # write to file
   outres = WriteXobs(xobsData, filename = xobsFile)
@@ -987,8 +1029,26 @@ getXobsData<-function(appInput,appSetup){
   if(appInput$xobsNum>0){
     for(i in 1:appInput$xobsNum){
       # download data
-      sysCmd=paste("opensearch-client",appInput$xobsURL[i],"enclosure | ciop-copy -s -U -O /tmp/ -", sep=" ")
-      xobsFile=system(command = sysCmd,intern = T)
+      
+        #sysCmd=paste("opensearch-client",appInput$xobsURL[i],"enclosure | ciop-copy -s -U -O /tmp/ -", sep=" ")
+        #xobsFile=system(command = sysCmd,intern = T)
+      
+      # using rciop-copy
+      {
+        # make subfolder for download:
+        targetFolder = paste(appSetup$tmpDir,"/xobsData_",as.character(i),sep="")
+        dir.create(targetFolder,recursive = T,showWarnings = F)
+        
+        # download file
+        download.res = rciop.copy(url = appInput$xobsURL[i], target = targetFolder)
+        
+        # path to downloaded file
+        if(download.res$exit.code==0){
+          xobsFile <- download.res$output
+        }else{
+          xobsFile = "download failed"
+        }
+      }
       if(file.exists(xobsFile)){
         nDownLoad=nDownLoad+1
         # add xobs file id number
@@ -1070,8 +1130,26 @@ getTimeOutputData<-function(appInput,appSetup){
   if(appInput$timeFileNum>0){
     for(i in 1:appInput$timeFileNum){
       # download data to tmp:
-      sysCmd=paste("opensearch-client ",appInput$timeFileURL[i]," enclosure | ciop-copy -s -U -O ",app.tmp_path, "/ -", sep="")
-      timeFile=system(command = sysCmd,intern = T)
+      
+        #sysCmd=paste("opensearch-client ",appInput$timeFileURL[i]," enclosure | ciop-copy -s -U -O ",app.tmp_path, "/ -", sep="")
+        #timeFile=system(command = sysCmd,intern = T)
+      
+      # using rciop-copy
+      {
+        # make subfolder for download:
+        targetFolder = paste(appSetup$tmpDir,"/timeData_",as.character(i),sep="")
+        dir.create(targetFolder,recursive = T,showWarnings = F)
+        
+        # download file
+        download.res = rciop.copy(url = appInput$timeFileURL[i], target = targetFolder)
+        
+        # path to downloaded file
+        if(download.res$exit.code==0){
+          timeFile <- download.res$output
+        }else{
+          timeFile = "download failed"
+        }
+      }
       
       if(file.exists(timeFile)){
         if(app.sys=="tep"){rciop.log ("DEBUG", paste("... timeFile ", timeFile,sep=""), "/util/R/hypeapps-utils.R")}
@@ -1098,7 +1176,7 @@ getTimeOutputData<-function(appInput,appSetup){
 
 ## -------------------------------------------------------------------------------
 ## analyseTimeOutputData - return period analysis on timeOutput data
-analyseTimeOutputData<-function(appSetup,appInput,timeData){
+analyseTimeOutputData<-function(appSetup,appInput,timeData,appDate){
   
   # loop over timeFiles and make the return period analysis
   if(timeData$timeFileNum>0){
@@ -1106,7 +1184,7 @@ analyseTimeOutputData<-function(appSetup,appInput,timeData){
       timeFileIn  = timeData$timeFile[i]
       timeFileName = strsplit(timeFileIn,split = "/")[[1]]
       timeFileName = timeFileName[length(timeFileName)]
-      timeFileOut = paste(appSetup$returnperiodResDir,paste("rp-",timeFileName,sep=""),sep="/")
+      timeFileOut = paste(appSetup$returnperiodResDir,paste("rp_",appDate,"_",timeFileName,sep=""),sep="/")
       
       if(app.sys=="tep"){rciop.log ("DEBUG", paste("   timeFileIn=",timeFileIn,sep=""), "/util/R/hypeapps-utils.R")}
       if(app.sys=="tep"){rciop.log ("DEBUG", paste("   timeFileName=",timeFileName,sep=""), "/util/R/hypeapps-utils.R")}
@@ -1114,10 +1192,17 @@ analyseTimeOutputData<-function(appSetup,appInput,timeData){
       
       # analyse file
       returnPeriodMagnitudes(name.in=timeFileIn,name.out=timeFileOut,wl.rp=appInput$returnPeriod,dist="gev")
+      
+      # save list of output files
+      if(i==1){
+        timeFileOutAll=timeFileOut
+      }else{
+        timeFileOutAll=c(timeFileOutAll,timeFileOut)
+      }
     } 
   }
   
-  appOutput=list("outDir"=appSetup$returnperiodResDir)
+  appOutput=list("outDir"=appSetup$returnperiodResDir,"files"=timeFileOutAll)
   
   
   return(appOutput)
@@ -2212,22 +2297,22 @@ updateModelInput<-function(appSetup=NULL,appInput=NULL,hindcast=NULL,modelForcin
 
 ## -------------------------------------------------------------------------------
 ## prepare application outputs
-prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,modelForcing = NULL,runRes=NULL){
+prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,modelForcing = NULL,runRes=NULL,appDate=NULL){
   
   # Create folder for data to be published
   outDir = paste(appSetup$tmpDir,'output',sep="/")
   dir.create(outDir,recursive = T,showWarnings = F)
   
   ## output file prefixes, to order the results better
-  prefix.img ="001"
-  prefix.csv ="002"
-  prefix.bas ="003"
-  prefix.map ="004"
-  prefix.tim ="005"
-  prefix.oth ="006"
-  prefix.log ="009"
-  prefix.wl.txt = "004"
-  prefix.wl.png = "001"
+  prefix.img =paste("001","_",appDate,sep="")
+  prefix.csv =paste("002","_",appDate,sep="")
+  prefix.bas =paste("003","_",appDate,sep="")
+  prefix.map =paste("004","_",appDate,sep="")
+  prefix.tim =paste("005","_",appDate,sep="")
+  prefix.oth =paste("006","_",appDate,sep="")
+  prefix.log =paste("009","_",appDate,sep="")
+  prefix.wl.txt = paste("004","_",appDate,sep="")
+  prefix.wl.png = paste("001","_",appDate,sep="")
   
   ## get hype2csv file from its URL
   if(!is.null(appSetup$hype2csvURL)){
@@ -2724,8 +2809,12 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
 }
 
 # functions for application logfile that will be published as part of application results
-appLogOpen<-function(appName,tmpDir){
-  fileName=paste(tmpDir,"/","hypeapps-",appName,"-logfile.txt",sep="")
+appLogOpen<-function(appName,tmpDir,appDate,prefix=NULL){
+  fileName=paste(appDate,"_","hypeapps-",appName,".log",sep="")
+  if(!is.null(prefix)){
+    fileName = paste(prefix,"_",fileName,sep="")
+  }
+  fileName = paste(tmpDir,"/",fileName,sep="")
   fileConn<-file(fileName,open="wt")
   writeLines(paste("hypeapps-",appName," starting, ",as.character(date()),sep=""),fileConn)
   return(list("fileName"=fileName,"fileConn"=fileConn))
