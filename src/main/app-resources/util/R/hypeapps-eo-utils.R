@@ -16,7 +16,7 @@
 #
 # hypeapps-eo-utils.R: EO data pre-processing utilities for the HTEP hydrological modelling applications.
 # Author:              David Gustafsson, SMHI
-# Version:             2017-06-01
+# Version:             2018-01-18
 
 # --------------------------------------------------------------------
 # Read a csv file from Water Level application and transform to HYPE
@@ -57,9 +57,24 @@ readWaterLevelCSV<-function(fname=NULL,subid=253,vars="wstr",wl0=NULL,t1=NULL,t2
   }
 
   # create time axis
-  years=substr(as.character(wldata$timestamp),7,10)
-  months=substr(as.character(wldata$timestamp),4,5)
-  days=substr(as.character(wldata$timestamp),1,2)
+  #
+  # Check time format - ouch, the Water level service provide timestep in two formats [YYYY-mm-dd] or [dd-mm-yy]
+  thirdChar = substr(as.character(wldata$timestamp[1]),3,3)
+  if(thirdChar=="-"){
+    timeFormat="dd-mm-yyyy"
+  }else{
+    timeFormat="yyyy-mm-dd"
+  }
+  # extract year, month, day
+  if(timeFormat=="dd-mm-yyyy"){
+    years=substr(as.character(wldata$timestamp),7,10)
+    months=substr(as.character(wldata$timestamp),4,5)
+    days=substr(as.character(wldata$timestamp),1,2)
+  }else{
+    years=substr(as.character(wldata$timestamp),1,4)
+    months=substr(as.character(wldata$timestamp),6,7)
+    days=substr(as.character(wldata$timestamp),9,10)
+  }
   data.dateVector=as.POSIXct(paste(years,months,days,sep="-"),tz="GMT")
   startDate=min(data.dateVector)
   endDate=max(data.dateVector)
@@ -76,6 +91,7 @@ readWaterLevelCSV<-function(fname=NULL,subid=253,vars="wstr",wl0=NULL,t1=NULL,t2
   varName=NULL
   subidVec=NULL
   varVec=NULL
+  # For now, only read the first variable and first subid
   for(j in 1:1){ #length(vars)){
     for(i in 1:1){ #length(subid)){
       varName=paste(vars[j],as.character(subid[i]),sep="")
