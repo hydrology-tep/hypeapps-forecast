@@ -16,7 +16,7 @@
 
 # Application 1: "Niger-HYPE 10 day forecast" (hypeapps-forecast)
 # Author:         David Gustafsson, SMHI
-# Version:        2018-01-18
+# Version:        2018-02-06
 
 # Workflow overview:
 # ------------------
@@ -65,7 +65,7 @@ if(app.sys=="tep"){
   source("application/util/R/hypeapps-utils.R")
 }
 ## open application logfile
-logFile=appLogOpen(appName = app.name,tmpDir = getwd(),appDate = app.date,prefix="009")
+logFile=appLogOpen(appName = app.name,tmpDir = getwd(),appDate = app.date,prefix="000")
 
 #################################################################################
 ## 2 - Application user inputs
