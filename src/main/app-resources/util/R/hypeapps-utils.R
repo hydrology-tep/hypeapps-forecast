@@ -16,7 +16,7 @@
 #
 # hypeapps-utils.R: R tools for the HTEP hydrological modelling application 
 # Author:           David Gustafsson, SMHI
-# Version:          2018-02-06  
+# Version:          2018-02-07 
 #
 
 ## --------------------------------------------------------------------------------
@@ -807,6 +807,10 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
   
   ## return period magnitudes default files OR file from input
   if(appName=="forecast"){
+    rpFileCOUT=NULL
+
+    rciop.log ("DEBUG", paste(" appInput$rpfile= ", appInput$rpfile, sep=""), "getHypeSetup")
+    
     if(appInput$rpfile=="default"){
       # download default file from data storage
       rpFileURL = paste(modelFilesURL,"returnlevels",paste(modelName,"-rp-cout.txt",sep=""),sep="/")
@@ -821,12 +825,19 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
       # input is a opensearch URL and not the URL to the file
       
       # make subfolder for download:
-      targetFolder = paste(appSetup$tmpDir,"/rpFile_1",sep="")
+      targetFolder = paste(tmpDir,"/rpFile_1",sep="")
       dir.create(targetFolder,recursive = T,showWarnings = F)
+
+      rciop.log ("DEBUG", paste(" targetFolder = ", targetFolder, sep=""), "getHypeSetup")
       
       # get file using opensearch-client
-      sysCmd=paste("opensearch-client ",appInput$rpfile," enclosure | ciop-copy -s -U -O ",appSetup$tmpDir,"/rpFile_1/ -", sep="")
+      sysCmd=paste("opensearch-client '",appInput$rpfile,"' enclosure | ciop-copy -s -U -O ",targetFolder,"/ -", sep="")
+      
+      rciop.log ("DEBUG", paste(" sysCmd = ", sysCmd, sep=""), "getHypeSetup")
+      
       rpFileCOUT=system(command = sysCmd,intern = T)
+      
+      rciop.log ("DEBUG", paste(" rpFileCOUT = ", rpFileCOUT, sep=""), "getHypeSetup")
       
     }
     # check existance of rpFileCOUT and check available return periods in the file
@@ -899,7 +910,7 @@ getEoData<-function(appInput,appSetup){
       rciop.log("DEBUG", paste("targetFolder=",targetFolder,sep=""), "getEoData")
       
       # get file using opensearch-client
-      sysCmd=paste("opensearch-client ",appInput$wlDataURL[i]," enclosure | ciop-copy -s -U -O ",appSetup$tmpDir,"/wlData_",as.character(i),"/ -", sep="")
+      sysCmd=paste("opensearch-client '",appInput$wlDataURL[i],"' enclosure | ciop-copy -s -U -O ",appSetup$tmpDir,"/wlData_",as.character(i),"/ -", sep="")
       
       rciop.log("DEBUG", paste("sysCmd=",sysCmd,sep=""), "getEoData")
       
@@ -1018,7 +1029,7 @@ getXobsData<-function(appInput,appSetup){
       dir.create(targetFolder,recursive = T,showWarnings = F)
       
       # get file using opensearch-client
-      sysCmd=paste("opensearch-client ",appInput$xobsURL[i]," enclosure | ciop-copy -s -U -O ",appSetup$tmpDir,"/xobsData_",as.character(i),"/ -", sep="")
+      sysCmd=paste("opensearch-client '",appInput$xobsURL[i],"' enclosure | ciop-copy -s -U -O ",appSetup$tmpDir,"/xobsData_",as.character(i),"/ -", sep="")
       xobsFile=system(command = sysCmd,intern = T)
      
       if(file.exists(xobsFile)){
@@ -1107,7 +1118,7 @@ getTimeOutputData<-function(appInput,appSetup){
       dir.create(targetFolder,recursive = T,showWarnings = F)
       
       # get file using opensearch-client
-      sysCmd=paste("opensearch-client ",appInput$timeFileURL[i]," enclosure | ciop-copy -s -U -O ",appSetup$tmpDir,"/timeData_",as.character(i),"/ -", sep="")
+      sysCmd=paste("opensearch-client '",appInput$timeFileURL[i],"' enclosure | ciop-copy -s -U -O ",appSetup$tmpDir,"/timeData_",as.character(i),"/ -", sep="")
       timeFile=system(command = sysCmd,intern = T)
       
       if(file.exists(timeFile)){
