@@ -16,7 +16,7 @@
 
 # Application 1: "Niger-HYPE 10 day forecast" (hypeapps-forecast)
 # Author:         David Gustafsson, SMHI
-# Version:        2017-11-08
+# Version:        2018-02-06
 
 # Workflow overview:
 # ------------------
@@ -33,6 +33,9 @@
 #################################################################################
 ## 1 - Initialization
 ## ------------------------------------------------------------------------------
+## create a date tag to include in output filenames
+app.date = format(Sys.time(), "%Y%m%d_%H%M")
+
 ## set application name
 app.name = "forecast"
 ## ------------------------------------------------------------------------------
@@ -62,7 +65,7 @@ if(app.sys=="tep"){
   source("application/util/R/hypeapps-utils.R")
 }
 ## open application logfile
-logFile=appLogOpen(appName = app.name,tmpDir = getwd())
+logFile=appLogOpen(appName = app.name,tmpDir = getwd(),appDate = app.date,prefix="000")
 
 #################################################################################
 ## 2 - Application user inputs
@@ -190,7 +193,8 @@ if(forecast.input==0){
 #                                    runRes = attr(forecast.run,"status"))
 app.outfiles <- prepareHypeAppsOutput(appSetup  = app.setup, appInput = app.input, 
                                     modelInput = forecast.input, modelForcing = forecast.forcing,
-                                    runRes = attr(forecast.run,"status"))
+                                    runRes = attr(forecast.run,"status"),
+                                    appDate = app.date)
 if(length(app.outfiles)>1){
   app.outfiles=sort(app.outfiles,decreasing = F)
 }
