@@ -11,7 +11,7 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
   <description>H-TEP Hydrological Modelling Application - 10 day forecast</description>
-  <version>1.5</version>
+  <version>1.7</version>
   <properties>
     <summary>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</summary>
     <description>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</description>
