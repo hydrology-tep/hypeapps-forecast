@@ -7,7 +7,7 @@
    <streamingExecutable>/application/node_forecast/run.R</streamingExecutable>
    <defaultParameters>
 
-     <parameter id="idate" type="LiteralData" scope="runtime" title="Forecast issue date (yyyy-mm-dd)" abstract="Data available since 2016-06-01" minOccurs="1" maxOccurs="1">2017-01-01</parameter>
+     <parameter id="idate" type="LiteralData" scope="runtime" title="Forecast issue date (yyyy-mm-dd)" abstract="Data available since 2016-06-01" minOccurs="1" maxOccurs="1">2018-09-01</parameter>
 
      <parameter id="variables" type="LiteralData" scope="runtime" title="Output variables" abstract="Select output variables" minOccurs="1" maxOccurs="8">
       <options>
@@ -174,7 +174,7 @@
 
    <parameters>
 
-     <parameter id="idate" type="LiteralData" scope="runtime">2017-01-01</parameter>
+     <parameter id="idate" type="LiteralData" scope="runtime">2018-09-01</parameter>
  
      <parameter id="variables" type="LiteralData" scope="runtime">
       <options> 
