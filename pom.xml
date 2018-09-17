@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.terradue</groupId>
     <artifactId>dcs-R-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.1-docker</version>
   </parent>
   <description>H-TEP Hydrological Modelling Application - 10 day forecast</description>
   <version>1.7</version>
