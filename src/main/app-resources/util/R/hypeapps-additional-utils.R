@@ -106,7 +106,7 @@ makeGFDArchive<-function(workDir="",resDir="",useLocal=T){
   
   # download archive from catalogue
   if(!useLocal){
-    sysCmd=paste("curl -o ", workdir,"/archive.zip https://store.terradue.com//smhi/gfd/niger-hype/hindcast/files/v1/archive.zip",sep="")
+    sysCmd=paste("curl ", " -o ", workdir,"/archive.zip https://store.terradue.com//smhi/gfd/niger-hype/hindcast/files/v1/archive.zip",sep="")
     a=system(sysCmd,intern=T)
   }
   
