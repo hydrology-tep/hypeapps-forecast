@@ -794,12 +794,14 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
       rciop.copy(paste(paste(shapefile.url,shapefile.layer,sep="/"),shapefile.ext[i],sep=""), shapefileDir)
     }
 
-    shape_ver <- strsplit(shapefile.url, "/")[[1]][8]
+    # Disable version tag for now 20190312
+    # shape_ver <- strsplit(shapefile.url, "/")[[1]][8]
+    shape_ver <- ""
 
     rciop.log ("DEBUG", shapefileDir, "getHypeSetup")
-    syscmd = paste("zip -j ", shapefileDir, "/subbasin.shp_", shape_ver, ".zip ", shapefileDir, "/", shapefile.layer, "*", sep="")
+    syscmd = paste("zip -j ", shapefileDir, "/subbasin.shp", shape_ver, ".zip ", shapefileDir, "/", shapefile.layer, "*", sep="")
     system(command = syscmd,intern = T)
-    rciop.publish(path=paste(shapefileDir, "/subbasin.shp_", shape_ver, ".zip", sep=""), recursive=FALSE, metalink=TRUE)
+    rciop.publish(path=paste(shapefileDir, "/subbasin.shp", shape_ver, ".zip", sep=""), recursive=FALSE, metalink=TRUE)
 
     # open and save shapefile as Rdata
     shapefileData = readOGR(dsn = shapefileDir, layer = shapefile.layer)
