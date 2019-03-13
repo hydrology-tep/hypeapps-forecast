@@ -669,7 +669,7 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
   
   ## model files run directory (for all applications, except returnperiod)
   if(appName=="historical"|appName=="forecast"|appName=="eodata"|appName=="returnperiod"){
-    modelFilesRunDir=paste(tmpDir,'model',modelName,sep="/")
+    modelFilesRunDir=paste(tmpDir,'model',appName, modelName,sep="/")
     dir.create(modelFilesRunDir,recursive = T,showWarnings = F)
   }else{
     modelFilesRunDir=NULL
@@ -793,12 +793,21 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
     for(i in 1:length(shapefile.ext)){
       rciop.copy(paste(paste(shapefile.url,shapefile.layer,sep="/"),shapefile.ext[i],sep=""), shapefileDir)
     }
-    
+
+    # Disable version tag for now 20190312
+    # shape_ver <- strsplit(shapefile.url, "/")[[1]][8]
+    shape_ver <- ""
+
+    rciop.log ("DEBUG", shapefileDir, "getHypeSetup")
+    syscmd = paste("zip -j ", shapefileDir, "/subbasin.shp", shape_ver, ".zip ", shapefileDir, "/", shapefile.layer, "*", sep="")
+    system(command = syscmd,intern = T)
+    rciop.publish(path=paste(shapefileDir, "/subbasin.shp", shape_ver, ".zip", sep=""), recursive=FALSE, metalink=TRUE)
+
     # open and save shapefile as Rdata
     shapefileData = readOGR(dsn = shapefileDir, layer = shapefile.layer)
     shapefileRdata = paste(shapefileDir,"/",shapefile.layer,".Rdata",sep="")
-    save(list = "shapefileData",file = shapefileRdata)
-    
+    save(list = "shapefileData",file = shapefileRdata)    
+
   }else{
     shapefileRdata=NULL
     shapefileData=NULL
@@ -844,7 +853,10 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
     if(!file.exists(rpFileCOUT)){
       rpFileCOUT=NULL
     }
-    
+
+    # publish return period file
+    rciop.publish(path=rpFileCOUT, recursive=FALSE, metalink=TRUE)
+
   }else{
     rpFileCOUT=NULL
   }
@@ -1240,7 +1252,7 @@ getGFDzipFromTep<-function(issueDateNum=as.POSIXct("2017-01-01", tz = "GMT"),
   if(file.exists(localFile)){file.remove(localFile)}
   
   # system command to download remote file to local path
-  sysCmd=paste("curl -o",localFile,remoteFile,sep=" ")
+  sysCmd=paste("curl ", "-o", localFile,remoteFile,sep=" ")
   
   # download by system call
   if(app.sys=="tep"){rciop.log ("DEBUG", paste(" trying command >> ",sysCmd,sep=""), "/util/R/hypeapps-utils.R")}
@@ -1296,7 +1308,7 @@ getHindcastForcingData<-function(startDate,endDate,appSetup,obsFiles,outDir,useR
       archiveFound = T
     }else{
       # download archive from data catalogue
-      sysCmd=paste("curl -o ", appSetup$tmpDir,"/archive.zip https://store.terradue.com//smhi/gfd/niger-hype/hindcast/files/v1/archive.zip",sep="")
+      sysCmd=paste("curl ", " -o ",appSetup$tmpDir,"/archive.zip https://store.terradue.com//smhi/gfd/niger-hype/hindcast/files/v1/archive.zip",sep="")
       a=system(sysCmd,intern=T)
       # unzip to forcing/archive
       archiveFile=paste(appSetup$tmpDir,"archive.zip",sep="/")
@@ -1601,13 +1613,13 @@ getModelForcing<-function(appSetup,appInput,dataSource="local",hindcast=T){
         archiveFound = T
       }else{
         # download archive from data catalogue
-        sysCmd=paste("curl -o ", appSetup$tmpDir,"/archive.zip https://store.terradue.com//smhi/gfd/niger-hype/hindcast/files/v1/archive.zip",sep="")
+        sysCmd=paste("curl ", " -o ", appSetup$tmpDir,"/archive.zip https://store.terradue.com//smhi/gfd/niger-hype/hindcast/files/v1/archive.zip",sep="")
         if(app.sys=="tep"){rciop.log ("DEBUG", paste(" trying command >> ",sysCmd,sep=""), "/util/R/hypeapps-utils.R")}
         a=system(sysCmd,intern=T)
         # unzip to forcing/archive
         archiveFile=paste(appSetup$tmpDir,"archive.zip",sep="/")
         if(file.exists(archiveFile)){
-          if(app.sys=="tep"){rciop.log ("DEBUG", paste("archiveFile from https://catalogue.terradue.com/hydro-smhi/ = ",archiveFile,sep=""), "/util/R/hypeapps-utils.R")}
+          if(app.sys=="tep"){rciop.log ("DEBUG", paste("archiveFile from https://catalogue.terradue.com/smhi/ = ",archiveFile,sep=""), "/util/R/hypeapps-utils.R")}
           unzip(zipfile = archiveFile,overwrite = T,exdir = archiveDir)
           archiveFound = T
         }else{
@@ -2783,7 +2795,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
 }
 
 # functions for application logfile that will be published as part of application results
-appLogOpen<-function(appName,tmpDir,appDate,prefix=NULL){
+appLogOpen<-function(appName, tmpDir,appDate,prefix=NULL){
   fileName=paste(appDate,"_","hypeapps-",appName,".log",sep="")
   if(!is.null(prefix)){
     fileName = paste(prefix,"_",fileName,sep="")
