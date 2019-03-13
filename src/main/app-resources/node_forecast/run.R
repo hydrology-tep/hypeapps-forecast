@@ -34,7 +34,7 @@
 ## 1 - Initialization
 ## ------------------------------------------------------------------------------
 ## create a date tag to include in output filenames
-app.date = format(Sys.time(), "%Y%m%d_%H%M")
+app.date = format(Sys.time(), "%Y%m%d_%H")
 
 ## set application name
 app.name = "forecast"
@@ -68,7 +68,7 @@ if(app.sys=="tep"){
   source("application/util/R/hypeapps-utils.R")
 }
 ## open application logfile
-logFile=appLogOpen(appName = app.name,tmpDir = getwd(),appDate = app.date,prefix="000")
+logFile=appLogOpen(appName = app.name, tmpDir = getwd(),appDate = app.date,prefix="000")
 
 #################################################################################
 ## 2 - Application user inputs

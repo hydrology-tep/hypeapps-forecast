@@ -15,28 +15,12 @@
 
 download_file <- function(local_file_name, url) {
 
-  # delete local file if it existst
+  # delete local file if it exist
   if(file.exists(local_file_name)){
      file.remove(local_file_name)
   }
 
-  # Copy apikey if not exist
-  if(!file.exists(paste(Sys.getenv("_CIOP_APPLICATION_PATH"), "apikey", sep="/"))){
-    rciop.log ("ERROR", paste0("Please create the file 'apikey' in _CIOP_APPLICATION_PATH root, usually at ", Sys.getenv("_CIOP_APPLICATION_PATH"), "/apikey"))
-    quit(status=1)
-  }
-
-  f_con <- file(paste(Sys.getenv("_CIOP_APPLICATION_PATH"), "apikey", sep="/"), "r")
-  first_line <- readLines(f_con,n=1)
-  close(f_con)
-
-  
-  apikey <- trimws(first_line)
-
-  # system command to download remote file to local path
-  sysCmd=paste("curl", "-u", apikey, "-o", local_file_name,url,sep=" ")
-  system(sysCmd,intern=T)  
-
+  rciop.copy(url, local_file_name, uncompress=TRUE)
   return (local_file_name)
 }
 

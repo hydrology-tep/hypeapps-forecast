@@ -2795,7 +2795,7 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
 }
 
 # functions for application logfile that will be published as part of application results
-appLogOpen<-function(appName,tmpDir,appDate,prefix=NULL){
+appLogOpen<-function(appName, tmpDir,appDate,prefix=NULL){
   fileName=paste(appDate,"_","hypeapps-",appName,".log",sep="")
   if(!is.null(prefix)){
     fileName = paste(prefix,"_",fileName,sep="")
