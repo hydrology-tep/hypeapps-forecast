@@ -16,11 +16,12 @@
 download_file <- function(local_file_name, url) {
 
   # delete local file if it exist
-  if(file.exists(local_file_name)){
-     file.remove(local_file_name)
+  if(file.exists(paste0("download/",local_file_name))){
+     file.remove(paste0("download/",local_file_name))
   }
 
-  rciop.copy(url, local_file_name, uncompress=TRUE)
+  dir.create("download")
+  rciop.copy(url, "download", uncompress=TRUE)
   return (local_file_name)
 }
 
@@ -44,10 +45,10 @@ TriggerDistribution <- function(path, idate) {
     download_file("./sms_nigerhype.txt", "'https://store.terradue.com/hydro-smhi/fanfar/distribution-templates/sms_nigerhype.txt'")
     download_file("./email_nigerhype.txt", "'https://store.terradue.com/hydro-smhi/fanfar/distribution-templates/email_nigerhype.txt'")
 
-    #sysCmd=paste("mv", "./sms_nigerhype.txt", path.templates, sep=" ")
-    #sysCmd=paste("mv", "./email_nigerhype.txt", path.templates, sep=" ")
-
-
+    sysCmd=paste("mv", "./download/sms_nigerhype.txt", path.templates, sep=" ")
+    system(sysCmd, intern=T)
+    sysCmd=paste("mv", "./download/email_nigerhype.txt", path.templates, sep=" ")
+    system(sysCmd, intern=T)
 
     #path.templates<-"../util/R/triggercode/templates/"  # path to where the message templates are stored. On our Store
     name.temp.sms<-"sms_nigerhype.txt"  # name of the SMS template, make dynamic, reading an input parameter instead for which model to use
