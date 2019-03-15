@@ -34,7 +34,9 @@
 ## 1 - Initialization
 ## ------------------------------------------------------------------------------
 ## create a date tag to include in output filenames
-app.date = format(Sys.time(), "%Y%m%d_%H")
+run_id <- runif(n=1, min=1, max=10)
+run_id <- as.character(run_id *100000)
+app.date = paste0(format(Sys.time(), "%Y%m%d_"), run_id)
 
 ## set application name
 app.name = "forecast"
@@ -83,7 +85,8 @@ log.res=appLogWrite(logText = "Inputs and parameters read",fileConn = logFile$fi
 ## 3 - Application setup
 ## ------------------------------------------------------------------------------
 ## Prepare basic model setup (static input files and hype model executable copied to working folder)
-app.setup <- getHypeAppSetup(modelName = model.name,
+app.setup <- getHypeAppSetup(run_id    = run_id,
+                             modelName = model.name,
                              modelBin  = model.bin,
                              tmpDir    = app.tmp_path,
                              appDir    = app.app_path,
