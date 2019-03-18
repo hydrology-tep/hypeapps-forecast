@@ -799,9 +799,9 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
     shape_ver <- ""
 
     rciop.log ("DEBUG", shapefileDir, "getHypeSetup")
-    syscmd = paste("zip -j ", shapefileDir, "/subbasin.shp", shape_ver, ".zip ", shapefileDir, "/", shapefile.layer, "*", sep="")
+    syscmd = paste("zip -j ", shapefileDir, "/", "subbasin_shp", shape_ver, ".zip ", shapefileDir, "/", shapefile.layer, "*", sep="")
     system(command = syscmd,intern = T)
-    rciop.publish(path=paste(shapefileDir, "/subbasin.shp", shape_ver, ".zip", sep=""), recursive=FALSE, metalink=TRUE)
+    rciop.publish(path=paste(shapefileDir, "/", "subbasin_shp", shape_ver, ".zip", sep=""), recursive=FALSE, metalink=TRUE)
 
     # open and save shapefile as Rdata
     shapefileData = readOGR(dsn = shapefileDir, layer = shapefile.layer)
@@ -854,7 +854,17 @@ getHypeAppSetup<-function(modelName,modelBin,tmpDir,appDir,appName,appInput,mode
       rpFileCOUT=NULL
     }
 
+    #rpFileCOUT_target <- paste0(tail(n=1, strsplit(rpFileCOUT, "/", fixed=T)[[1]]))
+    #rpFileCOUT_target <- paste0(dirname(rpFileCOUT), "/", rpFileCOUT_target)
+
+    #rciop.log ("DEBUG", paste(" rpFileCOUT = ", rpFileCOUT, sep=""), "getHypeSetup")
+    #rciop.log ("DEBUG", paste(" rpFileCOUT_target = ", rpFileCOUT_target, sep=""), "getHypeSetup")
+
     # publish return period file
+    #file.copy(rpFileCOUT, rpFileCOUT_target, overwrite=T)
+
+    #rciop.log ("DEBUG", paste(" rpFileCOUT_target exist = ", as.character(file.exists(rpFileCOUT_target)), sep=""), "getHypeSetup")
+    #rciop.publish(path=rpFileCOUT_target, recursive=FALSE, metalink=TRUE)
     rciop.publish(path=rpFileCOUT, recursive=FALSE, metalink=TRUE)
 
   }else{

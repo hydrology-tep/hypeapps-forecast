@@ -37,6 +37,7 @@ TriggerDistribution <- function(path, idate) {
 
     name.wl_out <- gsub(substr(name.wl, 1, 8), as.character(idate), name.wl, fixed=T)
     name.wl_out <- paste0(substr(name.wl, 1, 4), name.wl_out)
+    name.wl_out <- gsub("_forecast_mapWarningLevel.txt", "", name.wl_out)
 
     # Read this from the hydro-smhi fileshare store
     #path.templates <- paste(Sys.getenv("_CIOP_APPLICATION_PATH"), "util/R/triggercode/templates/", sep="/")
