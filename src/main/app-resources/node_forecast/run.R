@@ -44,7 +44,7 @@ while(length(input <- readLines(stdin_f, n=1)) > 0) {
     # run_id <- runif(n=1, min=1, max=10)
     # run_id <- as.character(run_id *100000)
     # app.date = paste0(format(Sys.time(), "%Y%m%d_"), run_id)
-    app.date = format(Sys.time(), "%Y%m%d")
+    app.date = format(Sys.time(), "%Y%m%d_%H%M")
 
     ## set application name
     app.name = "forecast"
@@ -159,6 +159,14 @@ while(length(input <- readLines(stdin_f, n=1)) > 0) {
 
         hindcast.run = system(command = app.setup$runCommand,intern = T)
         
+        hyssLogFile = dir(path = app.setup$runDir, pattern =".log")
+        if(length(hyssLogFile)>=0){
+            for(j in 1:length(hyssLogFile)){
+                file.copy(from = paste(app.setup$runDir,hyssLogFile[j],sep="/"), to = paste0(app.setup$runDir, "/", "000_", app.date, "_", gsub("hyss", "hindcast_hyss",hyssLogFile[j])))
+                rciop.publish(path=paste0(app.setup$runDir, "/", "000_", app.date, "_", gsub("hyss", "hindcast_hyss",hyssLogFile[j])), recursive=FALSE, metalink=TRUE)
+             }
+        }
+
         log.res=appLogWrite(logText = "... hindcast model run ready",fileConn = logFile$fileConn)
         if(app.sys=="tep"){rciop.log ("DEBUG", " ...hindcast model run ready", "/node_forecast/run.R")}
         

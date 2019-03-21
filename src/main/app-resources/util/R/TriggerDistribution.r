@@ -35,9 +35,11 @@ TriggerDistribution <- function(path, idate) {
     path.wl<-paste(path, "/", sep="")  # define the path to the location of  "...forecast_mapWarningLevel.txt"
     name.wl<-dir(path.wl,pattern= "forecast_mapWarningLevel.txt")
 
-    name.wl_out <- gsub(substr(name.wl, 1, 8), as.character(idate), name.wl, fixed=T)
+    name.wl_out <- gsub(substr(name.wl, 1, 8), gsub("-", "", as.character(idate)), name.wl, fixed=T)
     name.wl_out <- paste0(substr(name.wl, 1, 4), name.wl_out)
     name.wl_out <- gsub("_forecast_mapWarningLevel.txt", "", name.wl_out)
+
+    name.wl_out <- gsub(substr(name.wl_out, 13, 23), "", name.wl_out, fixed=T)
 
     # Read this from the hydro-smhi fileshare store
     #path.templates <- paste(Sys.getenv("_CIOP_APPLICATION_PATH"), "util/R/triggercode/templates/", sep="/")
