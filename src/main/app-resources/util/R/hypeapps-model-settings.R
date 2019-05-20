@@ -16,7 +16,7 @@
 #
 # hypeapps-model-settings.R: Model name, URL to store.terradue.com etc.
 # Author:                    David Gustafsson, SMHI
-# Version:                   2018-09-17
+# Version:                   2019-05-16
 
 ## [DO NOT EDIT] set all required variables to NULL
 model.name      = NULL
@@ -49,12 +49,12 @@ forcing.data.source =  "hydro-smhi"  # could be "local" or "hydro-smhi"
 
 forcing.archive.url  = "https://store.terradue.com/dgustafsson/hype-files/model/niger-hype/v2.23/forcingarchive"
 forcing.archive.start   = as.POSIXct("1979-01-01",tz="GMT")                    # first date in the forcing arhive data
-forcing.archive.end     = as.POSIXct("2017-12-31",tz="GMT")                    # last date in the forcing arhive data
+forcing.archive.end     = as.POSIXct("2018-12-31",tz="GMT")                    # last date in the forcing arhive data
 
 # [EDIT HERE] Statefiles settings
 state.files.url = "https://store.terradue.com/dgustafsson/hype-files/model/niger-hype/v2.23/statefiles"
 state.files="state_save19790101.txt"
-for(i in 1980:2018){
+for(i in 1980:2019){
   state.files=c(state.files,paste("state_save",as.character(i),"0101.txt",sep=""))
 }
 
