@@ -40,6 +40,13 @@ stdin_f <- file("stdin")
 open(stdin_f)
 while(length(input <- readLines(stdin_f, n=1)) > 0) {
 
+    # Use netcdf-to-obs
+    # in hypeapps-utils.R at line 843
+    # remove that code since netcdf to obs replace that
+    # publish the netcdf-to-obs pictures
+    system(paste0("source activate cdo-env; Rscript ", Sys.getenv("_CIOP_APPLICATION_PATH"), "/util/R/netcdf-to-obs/netcdf-to-obs-run.R"), intern=T)
+    system("source deactivate cdo-env", intern=T)
+
     # RUN ID give the code a random number to see how many times the code was run based on the random number in the output filenames
     # run_id <- runif(n=1, min=1, max=10)
     # run_id <- as.character(run_id *100000)
