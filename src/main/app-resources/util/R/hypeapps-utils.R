@@ -1384,7 +1384,8 @@ getHindcastForcingData<-function(startDate,endDate,appSetup,obsFiles,outDir,useR
       d1=1
       
       nIssueDates=0
-      
+      nErr=2
+
       while(notFound){
         issueDate.Num = ymd2posix(y1,m1,d1)+123*86400
         # try downloading hindcast with issue date equal to the requested
@@ -1426,6 +1427,15 @@ getHindcastForcingData<-function(startDate,endDate,appSetup,obsFiles,outDir,useR
           }else{
             notFound=T
             useLast=F
+            if(m2==m1){
+              if(nErr==0){
+                # Should check both first and last time step for additional time steps and adjust depending on
+                notFound=F
+                print("ERROR: First date in input data < last date-123")
+                q(save="no",status=1)
+              }
+              nErr=nErr-1
+            }
             y1=y2
             m1=m2
             d1=d2
@@ -1453,6 +1463,7 @@ getHindcastForcingData<-function(startDate,endDate,appSetup,obsFiles,outDir,useR
     if(useArchive){
       if(archiveFound){
         obsData = ReadPTQobs(paste(archiveDir,obsFiles[i],sep="/"))
+        colnames(obsData)[1] <- tolower(colnames(obsData)[1])
         iStart  = which(obsData[,1]<=as.POSIXct(startDate,tz="GMT"))
         iStart  = iStart[length(iStart)]
         iEnd    = which(obsData[,1]>=min(c(endDate,forcing.archive.end)))
@@ -1465,6 +1476,8 @@ getHindcastForcingData<-function(startDate,endDate,appSetup,obsFiles,outDir,useR
         for(j in 1:length(issueDates)){
           hindcastDir = paste(appSetup$tmpDir,"/forcing/hindcast/",DATE2INFODATE(issueDates[j]),sep="")
           newData = ReadPTQobs(paste(hindcastDir,obsFiles[i],sep="/"))
+          # Date column (due to rbind)
+          colnames(newData)[1] <- tolower(colnames(newData)[1])
           if(!useArchive & j==1){
             obsData=newData
           }else{
@@ -2599,7 +2612,6 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
                                appSetup$shapefileRdata,prefix.img,cdateTXT,edateTXT,sep=" ")
                 if(app.sys=="tep"){rciop.log ("DEBUG", paste(" trying map output plot script:  ",syscmd,sep=""), "/util/R/hypeapps-utils.R")}
                 plotres = system(command = syscmd,intern = T)
-                system("source deactive cairo-env")
                 if(app.sys=="tep"){rciop.log ("DEBUG", paste(" map output plot result:  ",plotres,sep=""), "/util/R/hypeapps-utils.R")}
               }
             }
@@ -2783,8 +2795,6 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
                            sep=" ")
             if(app.sys=="tep"){rciop.log ("DEBUG", paste(" trying warning level map plot script:  ",syscmd,sep=""), "/util/R/hypeapps-utils.R")}
             plotres = system(command = syscmd,intern = T)
-            system("source deactive cairo-env")
-
             if(app.sys=="tep"){rciop.log ("DEBUG", paste(" plot result:  ",plotres,sep=""), "/util/R/hypeapps-utils.R")}
           }
         }
