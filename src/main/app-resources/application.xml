@@ -160,7 +160,7 @@
 
  
  
- <workflow id="workflow" title="Niger-HYPE Forecast" abstract="Make 1-10 days hydrometeorological forecasts for the Niger River basin with the Niger-HYPE model. More info at http://hypeweb.smhi.se/niger-hype/forecast and http://www.smhi.net/hype/wiki.">
+ <workflow id="workflow" title="Niger-HYPE Forecast" abstract="Make 1-10 days hydrological forecasts for the Niger River basin with the Niger-HYPE model. More info at http://hypeweb.smhi.se/niger-hype/forecast and http://www.smhi.net/hype/wiki.">
 
   <workflowVersion>1.0</workflowVersion>
  
