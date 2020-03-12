@@ -1,6 +1,6 @@
 ## Script to analyze the risk/warning levels produced by the forecasting, and judge if a trigger should be created to distribute the information.
 ## By Jafet Andersson, Feb, 2019
-7
+
 # The logic of the script
 # 1. Analyze the "...forecast_mapWarningLevel.txt" file
 # 2. Apply a few criteria for wether a trigger should be made or not

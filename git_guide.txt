@@ -1,0 +1,42 @@
+Working with git in this project
+
+=== The idea is that when you have a task to do you ===
+1. Create a new git branch
+2. Finish your task in your git branch
+3. Combine (merge) your branch into the original (develop) branch
+
+=== To do this ===
+1. Clone down the project
+for example:
+# git clone git@github.com:hydrology-tep/hypeapps-forecast.git
+# cd hypeapps-forecast
+# git checkout develop
+
+2. Ensure you have the latest code
+# git pull
+
+3. Create a new branch, note the -b
+git checkout -b my-task
+
+4. Do your work until its done
+Coding...
+
+4. Commit your work
+git add ./path_to_my_changed_file ./path_to_my_changed_file2
+git commit -m "Comment about your work"
+git push
+
+5. Go to the project webpage and create a merge request from your branch into the original branch
+# example at https://github.com/hydrology-tep/hypeapps-forecast/commits/develop
+
+6. You or someone else now accepts the merge request on the webpage
+
+===== Tips ====
+* Everyday before you start working run
+git pull
+
+* If you run into problems
+  1. Copy the files you want to keep into a separate directory
+  2. Delete the entire project folder
+  3. Clone down the project again
+  4. git checkout my_branch
