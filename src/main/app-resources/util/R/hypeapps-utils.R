@@ -2599,7 +2599,6 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
                                appSetup$shapefileRdata,prefix.img,cdateTXT,edateTXT,sep=" ")
                 if(app.sys=="tep"){rciop.log ("DEBUG", paste(" trying map output plot script:  ",syscmd,sep=""), "/util/R/hypeapps-utils.R")}
                 plotres = system(command = syscmd,intern = T)
-                system("source deactive cairo-env")
                 if(app.sys=="tep"){rciop.log ("DEBUG", paste(" map output plot result:  ",plotres,sep=""), "/util/R/hypeapps-utils.R")}
               }
             }
@@ -2783,8 +2782,6 @@ prepareHypeAppsOutput<-function(appSetup=NULL,appInput=NULL,modelInput=NULL,mode
                            sep=" ")
             if(app.sys=="tep"){rciop.log ("DEBUG", paste(" trying warning level map plot script:  ",syscmd,sep=""), "/util/R/hypeapps-utils.R")}
             plotres = system(command = syscmd,intern = T)
-            system("source deactive cairo-env")
-
             if(app.sys=="tep"){rciop.log ("DEBUG", paste(" plot result:  ",plotres,sep=""), "/util/R/hypeapps-utils.R")}
           }
         }
