@@ -49,7 +49,8 @@
                   <requires>
                     <require>miniconda</require>
                     <require>openjpeg2</require>
-                    <require>proj</require>
+		  <!-- proj 4.7.0 will be added to the docker image manually -->
+                  <!--  <require>proj</require> -->
                     <require>libgfortran</require>
                     <require>ghostscript-fonts</require>
                     <require>urw-fonts</require>
