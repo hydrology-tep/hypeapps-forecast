@@ -22,20 +22,20 @@ YUM=/usr/bin/yum
 GREP=/bin/grep
 CUT=/bin/cut
 
-#${SUDO} ${YUM} downgrade -y proj
+${SUDO} ${YUM} downgrade -y proj
 
-exp_proj_ver="4.7.0-2.el6"
-#exp_proj_ver="4.8.0-2.rhel6"
+# exp_proj_ver="4.7.0-2.el6"
+# #exp_proj_ver="4.8.0-2.rhel6"
 
-proj_ver=$(${YUM} list installed | ${GREP} -i proj | ${CUT} -d ' ' -f 27)
+# proj_ver=$(${YUM} list installed | ${GREP} -i proj | ${CUT} -d ' ' -f 27)
 
-if [ -n "${proj_ver}" ]; then
+# if [ -n "${proj_ver}" ]; then
 
-    if [ "x${proj_ver}" != "x${exp_proj_ver}" ]; then
-	#${SUDO} ${YUM} install -y proj-${exp_proj_ver}
-	${SUDO} ${YUM} downgrade -y proj
-    fi
-fi
+#     if [ "x${proj_ver}" != "x${exp_proj_ver}" ]; then
+# 	#${SUDO} ${YUM} install -y proj-${exp_proj_ver}
+# 	${SUDO} ${YUM} downgrade -y proj
+#     fi
+# fi
 
-/opt/anaconda/bin/conda install -y --file /application/dependencies/R/packages.list
-/opt/anaconda/bin/conda create --name cairo-env --file /application/dependencies/R/cairo-env.list
+#/opt/anaconda/bin/conda install -y --file /application/dependencies/R/packages.list
+#/opt/anaconda/bin/conda create --name cairo-env --file /application/dependencies/R/cairo-env.list
