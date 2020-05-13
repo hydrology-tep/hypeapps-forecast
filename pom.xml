@@ -11,7 +11,7 @@
     <version>2.0.0</version>
   </parent>
   <description>H-TEP Hydrological Modelling Application - 10 day forecast</description>
-  <version>1.18</version>
+  <version>1.19</version>
   <properties>
     <summary>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</summary>
     <description>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</description>
@@ -49,7 +49,9 @@
                   <requires>
                     <require>miniconda</require>
                     <require>openjpeg2</require>
-                    <require>proj = 4.7.0-2.el6</require>
+                    <!-- proj 4.7, run-time error with 4.8 -->
+                    <!--<require>proj = 4.7.0</require> -->
+                    <!-- it will require an intervention from Terradue before the deployment to production  -->
                     <require>libgfortran</require>
                     <require>ghostscript-fonts</require>
                     <require>urw-fonts</require>
