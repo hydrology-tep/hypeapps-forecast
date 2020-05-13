@@ -46,8 +46,8 @@
                 </goals>
                 <configuration>
                   <!-- Set here the dependencies installed with 'sudo yum install'-->
-                  <requires>
-                    <require>miniconda</require>
+		  <requires>
+                    <require>miniconda = 4.4.10-1.el6</require>
                     <require>openjpeg2</require>
                     <!-- proj 4.7, run-time error with 4.8 -->
                     <!--<require>proj = 4.7.0</require> -->
