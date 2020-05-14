@@ -11,7 +11,7 @@
     <version>2.0.0</version>
   </parent>
   <description>H-TEP Hydrological Modelling Application - 10 day forecast</description>
-  <version>1.20</version>
+  <version>1.21</version>
   <properties>
     <summary>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</summary>
     <description>H-TEP Hydrological Modelling Thematic Application  - 10 day forecast</description>
@@ -47,7 +47,7 @@
                 <configuration>
                   <!-- Set here the dependencies installed with 'sudo yum install'-->
                   <requires>
-                    <require>miniconda</require>
+                    <require>miniconda = 4.4.10</require>
                     <require>openjpeg2</require>
                     <!-- proj 4.7, run-time error with 4.8 -->
                     <!--<require>proj = 4.7.0</require> -->
